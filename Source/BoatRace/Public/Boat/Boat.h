@@ -18,6 +18,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable)
 	virtual void Drive(float InputX, float InputY) override;
+	UFUNCTION(NetMulticast, Reliable, WithValidation)
+	void ServerDrive(float InputX, float InputY);
+
 	virtual void UpdateCheckPoint(const FName& CurrentBoxOverlapTag) override;
 	virtual void UpdateMaxCheckPoints(int32 MaxCheckPoints) override;
 	virtual void UpdateTotalLaps(int32 LevelTotalLaps) override;
