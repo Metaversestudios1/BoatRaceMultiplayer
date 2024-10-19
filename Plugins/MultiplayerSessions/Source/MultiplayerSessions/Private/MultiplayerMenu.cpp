@@ -105,7 +105,7 @@ void UMultiplayerMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& 
 		Result.Session.SessionSettings.Get(FName("MatchType"), SettingsValue);
 		if (SettingsValue == MatchType)
 		{
-			MultiplayerSessionsSubsystem->JoinSessions(Result);
+			MultiplayerSessionsSubsystem->JoinSession(Result);
 			return;
 		}
 	}

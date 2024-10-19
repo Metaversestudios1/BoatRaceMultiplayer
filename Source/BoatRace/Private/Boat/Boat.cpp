@@ -21,6 +21,9 @@ ABoat::ABoat()
 	Buoyancy = CreateDefaultSubobject<UBuoyancyComponent>(TEXT("Buoyancy"));
 
 	BoatMesh->SetSimulatePhysics(true);
+
+	bReplicates = true;
+	SetReplicateMovement(true);
 }
 
 
@@ -38,6 +41,12 @@ void ABoat::Tick(float DeltaTime)
 
 void ABoat::Drive(float InputX, float InputY)
 {
+	if (!HasAuthority())
+	{
+		ServerDrive(InputX, InputY);
+		return;
+	}
+
 	if (BoatMesh == nullptr) return;
 
 	FVector ForwardForce = ((GetActorForwardVector() * ForceMultiplier) * InputY);
@@ -52,6 +61,16 @@ void ABoat::Drive(float InputX, float InputY)
 
 	X = InputX;
 	Y = InputY;
+}
+
+void ABoat::ServerDrive_Implementation(float InputX, float InputY)
+{
+	Drive(InputX, InputY);
+}
+
+bool ABoat::ServerDrive_Validate(float InputX, float InputY)
+{
+	return true;
 }
 
 void ABoat::UpdateCheckPoint(const FName& CurrentBoxOverlapTag)
