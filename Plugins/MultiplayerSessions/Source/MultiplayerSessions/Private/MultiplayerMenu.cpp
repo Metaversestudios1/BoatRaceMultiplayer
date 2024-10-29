@@ -81,7 +81,12 @@ void UMultiplayerMenu::OnCreateSession(bool bWasSuccessful)
 		}
 
 		UWorld* World = GetWorld();
+		if (World) 
 		{
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Magenta, FString(TEXT("Travelling to level")));
+			}
 			World->ServerTravel(PathToLobby);
 		}
 	}
