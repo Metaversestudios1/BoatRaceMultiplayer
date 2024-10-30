@@ -11,19 +11,21 @@
 ABoat::ABoat()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+	SetReplicateMovement(true);
 
 	BoatMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Boat"));
 	RootComponent = BoatMesh;
+	BoatMesh->SetSimulatePhysics(true);
+	BoatMesh->SetIsReplicated(true);
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
 	SpringArm->SetupAttachment(GetRootComponent());
+
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
 	Buoyancy = CreateDefaultSubobject<UBuoyancyComponent>(TEXT("Buoyancy"));
-
-	BoatMesh->SetSimulatePhysics(true);
-
-	bReplicates = true;
-	SetReplicateMovement(true);
 }
 
 
@@ -41,14 +43,13 @@ void ABoat::Tick(float DeltaTime)
 
 void ABoat::Drive(float InputX, float InputY)
 {
-	if (!HasAuthority())
+	if (!HasAuthority()) // If this is a client, ask the server to move the boat
 	{
 		ServerDrive(InputX, InputY);
 		return;
 	}
 
-	if (BoatMesh == nullptr) return;
-
+	// Movement logic on the server
 	FVector ForwardForce = ((GetActorForwardVector() * ForceMultiplier) * InputY);
 	BoatMesh->AddForce(ForwardForce);
 
@@ -65,12 +66,12 @@ void ABoat::Drive(float InputX, float InputY)
 
 void ABoat::ServerDrive_Implementation(float InputX, float InputY)
 {
-	Drive(InputX, InputY);
+	Drive(InputX, InputY); // Execute movement on the server
 }
 
 bool ABoat::ServerDrive_Validate(float InputX, float InputY)
 {
-	return true;
+	return true; // You can add any validation logic here
 }
 
 void ABoat::UpdateCheckPoint(const FName& CurrentBoxOverlapTag)
