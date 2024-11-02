@@ -39,6 +39,8 @@ protected:
 
 
 private:
+	void ApplyMovement(float InputX, float InputY);
+
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BoatMesh;
 

@@ -40,8 +40,7 @@ void ABoat::Tick(float DeltaTime)
 	}
 }
 
-
-void ABoat::Drive(float InputX, float InputY)
+void ABoat::ApplyMovement(float InputX, float InputY)
 {
 	FVector ForwardForce = ((GetActorForwardVector() * ForceMultiplier) * InputY);
 	BoatMesh->AddForce(ForwardForce);
@@ -55,24 +54,24 @@ void ABoat::Drive(float InputX, float InputY)
 
 	X = InputX;
 	Y = InputY;
+}
 
-	if (!HasAuthority())
+void ABoat::Drive(float InputX, float InputY)
+{
+	if (HasAuthority())
 	{
-		ServerDrive(InputX, InputY);
-		return;
+		ApplyMovement(InputX, InputY);
+	}
+	else 
+	{
+		ApplyMovement(InputX, InputY);
+		ServerDrive(InputX, InputY); 
 	}
 }
 
 void ABoat::ServerDrive_Implementation(float InputX, float InputY)
 {
-	FVector ForwardForce = ((GetActorForwardVector() * ForceMultiplier) * InputY);
-	BoatMesh->AddForce(ForwardForce);
-
-	FRotator TurnRotation = FRotator(0, (InputX * TorqueMultiplier), 0);
-	BoatMesh->AddTorqueInDegrees(FVector(0.f, 0.f, TurnRotation.Yaw));
-
-	X = InputX;
-	Y = InputY;
+	ApplyMovement(InputX, InputY);
 }
 
 void ABoat::UpdateCheckPoint(const FName& CurrentBoxOverlapTag)
