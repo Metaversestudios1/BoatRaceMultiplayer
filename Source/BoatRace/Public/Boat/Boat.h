@@ -23,7 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void Drive(float InputX, float InputY) override;
 
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(Server, Unreliable)
 	void ServerDrive(float InputX, float InputY);
 
 
