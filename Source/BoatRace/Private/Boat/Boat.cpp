@@ -43,13 +43,6 @@ void ABoat::Tick(float DeltaTime)
 
 void ABoat::Drive(float InputX, float InputY)
 {
-	if (!HasAuthority()) // If this is a client, ask the server to move the boat
-	{
-		ServerDrive(InputX, InputY);
-		return;
-	}
-
-	// Movement logic on the server
 	FVector ForwardForce = ((GetActorForwardVector() * ForceMultiplier) * InputY);
 	BoatMesh->AddForce(ForwardForce);
 
@@ -62,16 +55,24 @@ void ABoat::Drive(float InputX, float InputY)
 
 	X = InputX;
 	Y = InputY;
+
+	if (!HasAuthority())
+	{
+		ServerDrive(InputX, InputY);
+		return;
+	}
 }
 
 void ABoat::ServerDrive_Implementation(float InputX, float InputY)
 {
-	Drive(InputX, InputY); // Execute movement on the server
-}
+	FVector ForwardForce = ((GetActorForwardVector() * ForceMultiplier) * InputY);
+	BoatMesh->AddForce(ForwardForce);
 
-bool ABoat::ServerDrive_Validate(float InputX, float InputY)
-{
-	return true; // You can add any validation logic here
+	FRotator TurnRotation = FRotator(0, (InputX * TorqueMultiplier), 0);
+	BoatMesh->AddTorqueInDegrees(FVector(0.f, 0.f, TurnRotation.Yaw));
+
+	X = InputX;
+	Y = InputY;
 }
 
 void ABoat::UpdateCheckPoint(const FName& CurrentBoxOverlapTag)
