@@ -42,15 +42,38 @@ void ABoat::Tick(float DeltaTime)
 
 void ABoat::ApplyMovement(float InputX, float InputY)
 {
-	FVector ForwardForce = ((GetActorForwardVector() * ForceMultiplier) * InputY);
-	BoatMesh->AddForce(ForwardForce);
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
-	if (InputY < 0)
+	FVector ForwardForce = GetActorForwardVector() * ForceMultiplier * InputY;
+	BoatSpeed = GetVelocity().Size2D() * 0.036f;
+
+	float CurrentMaxSpeed = InputY > 0 ? MaxSpeed : MaxReverseSpeed;
+
+	if (BoatSpeed <= CurrentMaxSpeed || InputY <= 0)
 	{
-		InputX *= -1;
+		if (InputY < 0 && BoatSpeed > MaxReverseSpeed)
+		{
+			ForwardForce = FVector::ZeroVector;
+		}
+		BoatMesh->AddForce(ForwardForce);
 	}
-	FRotator TurnRotation = FRotator(0, (InputX * TorqueMultiplier), 0);
-	BoatMesh->AddTorqueInDegrees(FVector(0.f, 0.f, TurnRotation.Yaw));
+
+	if (FMath::Abs(InputX) > KINDA_SMALL_NUMBER)
+	{
+		if (InputY < 0.f)
+		{
+			InputX *= -1;
+		}
+		float CurrentTurn = FMath::Clamp(InputX * TurnRate, -TurnRate, TurnRate) * DeltaTime;
+		FRotator NewRotation = GetActorRotation();
+		NewRotation.Yaw += CurrentTurn * TurnSmoothness;
+		SetActorRotation(NewRotation);
+	}
+
+	// Apply lateral damping to reduce drifting
+	FVector LateralVelocity = BoatMesh->GetRightVector() * FVector::DotProduct(BoatMesh->GetPhysicsLinearVelocity(), BoatMesh->GetRightVector());
+	FVector LateralDampingForce = -LateralVelocity * LateralDampingFactor;
+	BoatMesh->AddForce(LateralDampingForce);
 
 	X = InputX;
 	Y = InputY;
@@ -58,13 +81,10 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 
 void ABoat::Drive(float InputX, float InputY)
 {
-	if (HasAuthority())
+	ApplyMovement(InputX, InputY);
+
+	if (!HasAuthority())
 	{
-		ApplyMovement(InputX, InputY);
-	}
-	else 
-	{
-		ApplyMovement(InputX, InputY);
 		ServerDrive(InputX, InputY); 
 	}
 }
@@ -123,6 +143,14 @@ void ABoat::BeginPlay()
 	Super::BeginPlay();
 
 	Tags.Add(FName("Boat"));
+
+	BoatMesh->bReplicatePhysicsToAutonomousProxy = false;
+
+
+	if (GetLocalRole() == ENetRole::ROLE_AutonomousProxy || GetLocalRole() == ENetRole::ROLE_SimulatedProxy)
+	{
+		SetPhysicsReplicationMode(EPhysicsReplicationMode::Resimulation);
+	}
 
 	if (BoatUIClass)
 	{
