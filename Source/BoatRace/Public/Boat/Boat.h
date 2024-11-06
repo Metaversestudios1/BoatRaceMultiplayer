@@ -7,6 +7,7 @@
 #include "Interfaces/BoatInterface.h"
 #include "Boat.generated.h"
 
+class UNiagaraComponent;
 
 UCLASS()
 class BOATRACE_API ABoat : public APawn, public IBoatInterface
@@ -55,6 +56,11 @@ private:
 
 	float BoatSpeed = 0;
 
+	UPROPERTY(VisibleAnywhere)
+	UNiagaraComponent* L_WaterFX;
+
+	UPROPERTY(VisibleAnywhere)
+	UNiagaraComponent* R_WaterFX;
 
 	UPROPERTY(EditAnywhere, Category = "Boat Movement")
 	float ForceMultiplier = 80000.f;

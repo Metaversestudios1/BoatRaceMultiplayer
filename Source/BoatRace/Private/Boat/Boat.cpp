@@ -7,6 +7,7 @@
 #include "BuoyancyComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/BoatUI.h"
+#include "NiagaraComponent.h"
 
 ABoat::ABoat()
 {
@@ -26,6 +27,11 @@ ABoat::ABoat()
 	Camera->SetupAttachment(SpringArm);
 
 	Buoyancy = CreateDefaultSubobject<UBuoyancyComponent>(TEXT("Buoyancy"));
+
+	L_WaterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L Water FX"));
+	L_WaterFX->SetupAttachment(GetRootComponent());
+	R_WaterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R Water FX"));
+	R_WaterFX->SetupAttachment(GetRootComponent());
 }
 
 
@@ -38,16 +44,29 @@ void ABoat::Tick(float DeltaTime)
 	{
 		BoatUI->SetSpeed(BoatSpeed);
 	}
+
+	if (R_WaterFX && L_WaterFX && BoatSpeed <= 20.f)
+	{
+		R_WaterFX->Deactivate();
+		L_WaterFX->Deactivate();
+	}
 }
 
 void ABoat::ApplyMovement(float InputX, float InputY)
 {
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
+	if (R_WaterFX && L_WaterFX && BoatSpeed > 20.f)
+	{
+		R_WaterFX->Activate(false);
+		L_WaterFX->Activate(false);
+	}
+
 	FVector ForwardForce = GetActorForwardVector() * ForceMultiplier * InputY;
 	BoatSpeed = GetVelocity().Size2D() * 0.036f;
 
 	float CurrentMaxSpeed = InputY > 0 ? MaxSpeed : MaxReverseSpeed;
+
 
 	if (BoatSpeed <= CurrentMaxSpeed || InputY <= 0)
 	{
@@ -147,12 +166,18 @@ void ABoat::BeginPlay()
 	if (BoatUIClass && IsLocallyControlled()) 
   {
 	  BoatMesh->bReplicatePhysicsToAutonomousProxy = false;
-
-
+    
 	  if (GetLocalRole() == ENetRole::ROLE_AutonomousProxy || GetLocalRole() == ENetRole::ROLE_SimulatedProxy)
 	  {
 	  	SetPhysicsReplicationMode(EPhysicsReplicationMode::Resimulation);
 	  }
-
   }
+}
+
+
+	if (R_WaterFX && L_WaterFX)
+	{
+		R_WaterFX->Deactivate();
+		L_WaterFX->Deactivate();
+	}
 }
