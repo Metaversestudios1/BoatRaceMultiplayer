@@ -31,7 +31,12 @@ ABoat::ABoat()
 	L_WaterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L Water FX"));
 	L_WaterFX->SetupAttachment(GetRootComponent());
 	R_WaterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R Water FX"));
-	R_WaterFX->SetupAttachment(GetRootComponent());
+	R_WaterFX->SetupAttachment(GetRootComponent());	
+	
+	L_BackWaterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("L Back Water FX"));
+	L_BackWaterFX->SetupAttachment(GetRootComponent());
+	R_BackWaterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R Back Water FX"));
+	R_BackWaterFX->SetupAttachment(GetRootComponent());
 }
 
 
@@ -50,6 +55,7 @@ void ABoat::Tick(float DeltaTime)
 		R_WaterFX->Deactivate();
 		L_WaterFX->Deactivate();
 	}
+
 }
 
 void ABoat::ApplyMovement(float InputX, float InputY)
@@ -101,6 +107,20 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 void ABoat::Drive(float InputX, float InputY)
 {
 	ApplyMovement(InputX, InputY);
+
+	if (InputX < 0)
+	{
+		L_BackWaterFX->Activate(false);
+	}
+	else if (InputX > 0)
+	{
+		R_BackWaterFX->Activate(false);
+	}
+	else
+	{
+		R_BackWaterFX->Deactivate();
+		L_BackWaterFX->Deactivate();
+	}
 
 	if (!HasAuthority())
 	{
@@ -163,7 +183,7 @@ void ABoat::BeginPlay()
 
 	Tags.Add(FName("Boat"));
 
-	if (BoatUIClass) 
+	if (BoatUIClass && IsLocallyControlled())
 	{
 	  BoatUI = Cast<UBoatUI>(CreateWidget<UUserWidget>(GetWorld(), BoatUIClass));
 		if (BoatUI)
@@ -173,9 +193,12 @@ void ABoat::BeginPlay()
 		}
 	}
 
-	if (R_WaterFX && L_WaterFX)
+	if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX)
 	{
 		R_WaterFX->Deactivate();
 		L_WaterFX->Deactivate();
+
+		L_BackWaterFX->Deactivate();
+		R_BackWaterFX->Deactivate();
 	}
 }

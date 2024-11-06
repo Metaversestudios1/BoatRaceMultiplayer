@@ -60,7 +60,13 @@ private:
 	UNiagaraComponent* L_WaterFX;
 
 	UPROPERTY(VisibleAnywhere)
-	UNiagaraComponent* R_WaterFX;
+	UNiagaraComponent* R_WaterFX;	
+	
+	UPROPERTY(VisibleAnywhere)
+	UNiagaraComponent* L_BackWaterFX;
+
+	UPROPERTY(VisibleAnywhere)
+	UNiagaraComponent* R_BackWaterFX;
 
 	UPROPERTY(EditAnywhere, Category = "Boat Movement")
 	float ForceMultiplier = 80000.f;
