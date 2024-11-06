@@ -40,38 +40,58 @@ void ABoat::Tick(float DeltaTime)
 	}
 }
 
-
-void ABoat::Drive(float InputX, float InputY)
+void ABoat::ApplyMovement(float InputX, float InputY)
 {
-	if (!HasAuthority()) // If this is a client, ask the server to move the boat
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+
+	FVector ForwardForce = GetActorForwardVector() * ForceMultiplier * InputY;
+	BoatSpeed = GetVelocity().Size2D() * 0.036f;
+
+	float CurrentMaxSpeed = InputY > 0 ? MaxSpeed : MaxReverseSpeed;
+
+	if (BoatSpeed <= CurrentMaxSpeed || InputY <= 0)
 	{
-		ServerDrive(InputX, InputY);
-		return;
+		if (InputY < 0 && BoatSpeed > MaxReverseSpeed)
+		{
+			ForwardForce = FVector::ZeroVector;
+		}
+		BoatMesh->AddForce(ForwardForce);
 	}
 
-	// Movement logic on the server
-	FVector ForwardForce = ((GetActorForwardVector() * ForceMultiplier) * InputY);
-	BoatMesh->AddForce(ForwardForce);
-
-	if (InputY < 0)
+	if (FMath::Abs(InputX) > KINDA_SMALL_NUMBER)
 	{
-		InputX *= -1;
+		if (InputY < 0.f)
+		{
+			InputX *= -1;
+		}
+		float CurrentTurn = FMath::Clamp(InputX * TurnRate, -TurnRate, TurnRate) * DeltaTime;
+		FRotator NewRotation = GetActorRotation();
+		NewRotation.Yaw += CurrentTurn * TurnSmoothness;
+		SetActorRotation(NewRotation);
 	}
-	FRotator TurnRotation = FRotator(0, (InputX * TorqueMultiplier), 0);
-	BoatMesh->AddTorqueInDegrees(FVector(0.f, 0.f, TurnRotation.Yaw));
+
+	// Apply lateral damping to reduce drifting
+	FVector LateralVelocity = BoatMesh->GetRightVector() * FVector::DotProduct(BoatMesh->GetPhysicsLinearVelocity(), BoatMesh->GetRightVector());
+	FVector LateralDampingForce = -LateralVelocity * LateralDampingFactor;
+	BoatMesh->AddForce(LateralDampingForce);
 
 	X = InputX;
 	Y = InputY;
 }
 
-void ABoat::ServerDrive_Implementation(float InputX, float InputY)
+void ABoat::Drive(float InputX, float InputY)
 {
-	Drive(InputX, InputY); // Execute movement on the server
+	ApplyMovement(InputX, InputY);
+
+	if (!HasAuthority())
+	{
+		ServerDrive(InputX, InputY); 
+	}
 }
 
-bool ABoat::ServerDrive_Validate(float InputX, float InputY)
+void ABoat::ServerDrive_Implementation(float InputX, float InputY)
 {
-	return true; // You can add any validation logic here
+	ApplyMovement(InputX, InputY);
 }
 
 void ABoat::UpdateCheckPoint(const FName& CurrentBoxOverlapTag)
@@ -125,12 +145,14 @@ void ABoat::BeginPlay()
 	Tags.Add(FName("Boat"));
 
 	if (BoatUIClass && IsLocallyControlled()) 
-	{
-		BoatUI = Cast<UBoatUI>(CreateWidget<UUserWidget>(GetWorld(), BoatUIClass));
-		if (BoatUI)
-		{
-			BoatUI->AddToViewport();
-			BoatUI->SetCurrentLap(CurrentLap);
-		}
-	}
+  {
+	  BoatMesh->bReplicatePhysicsToAutonomousProxy = false;
+
+
+	  if (GetLocalRole() == ENetRole::ROLE_AutonomousProxy || GetLocalRole() == ENetRole::ROLE_SimulatedProxy)
+	  {
+	  	SetPhysicsReplicationMode(EPhysicsReplicationMode::Resimulation);
+	  }
+
+  }
 }

@@ -23,7 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void Drive(float InputX, float InputY) override;
 
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(Server, Unreliable)
 	void ServerDrive(float InputX, float InputY);
 
 
@@ -39,6 +39,8 @@ protected:
 
 
 private:
+	void ApplyMovement(float InputX, float InputY);
+
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BoatMesh;
 
@@ -53,11 +55,24 @@ private:
 
 	float BoatSpeed = 0;
 
-	UPROPERTY(EditAnywhere, Category = "Attributes")
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
 	float ForceMultiplier = 80000.f;
 
-	UPROPERTY(EditAnywhere, Category = "Attributes")
-	float TorqueMultiplier = 400000000.f;
+	UPROPERTY(EditAnywhere)
+	float LateralDampingFactor = 100.f;
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float MaxSpeed = 80.f;
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float MaxReverseSpeed = 20.f;
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float TurnRate = 2.5f;
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float TurnSmoothness = 25.f;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Lap")
 	int32 NextCheckPoint = 1;
