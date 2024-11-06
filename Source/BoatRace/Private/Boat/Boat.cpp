@@ -124,7 +124,7 @@ void ABoat::BeginPlay()
 
 	Tags.Add(FName("Boat"));
 
-	if (BoatUIClass)
+	if (BoatUIClass && IsLocallyControlled()) 
 	{
 		BoatUI = Cast<UBoatUI>(CreateWidget<UUserWidget>(GetWorld(), BoatUIClass));
 		if (BoatUI)
