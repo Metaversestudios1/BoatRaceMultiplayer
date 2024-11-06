@@ -144,21 +144,15 @@ void ABoat::BeginPlay()
 
 	Tags.Add(FName("Boat"));
 
-	BoatMesh->bReplicatePhysicsToAutonomousProxy = false;
+	if (BoatUIClass && IsLocallyControlled()) 
+  {
+	  BoatMesh->bReplicatePhysicsToAutonomousProxy = false;
 
 
-	if (GetLocalRole() == ENetRole::ROLE_AutonomousProxy || GetLocalRole() == ENetRole::ROLE_SimulatedProxy)
-	{
-		SetPhysicsReplicationMode(EPhysicsReplicationMode::Resimulation);
-	}
+	  if (GetLocalRole() == ENetRole::ROLE_AutonomousProxy || GetLocalRole() == ENetRole::ROLE_SimulatedProxy)
+	  {
+	  	SetPhysicsReplicationMode(EPhysicsReplicationMode::Resimulation);
+	  }
 
-	if (BoatUIClass)
-	{
-		BoatUI = Cast<UBoatUI>(CreateWidget<UUserWidget>(GetWorld(), BoatUIClass));
-		if (BoatUI)
-		{
-			BoatUI->AddToViewport();
-			BoatUI->SetCurrentLap(CurrentLap);
-		}
-	}
+  }
 }
