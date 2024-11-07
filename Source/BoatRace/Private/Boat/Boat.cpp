@@ -50,8 +50,10 @@ void ABoat::Tick(float DeltaTime)
 		BoatUI->SetSpeed(BoatSpeed);
 	}
 
-	if (R_WaterFX && L_WaterFX && BoatSpeed <= 20.f)
+	if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX && BoatSpeed <= 20.f)
 	{
+		R_WaterFX->Deactivate();
+		L_WaterFX->Deactivate();
 		R_BackWaterFX->Deactivate();
 		L_BackWaterFX->Deactivate();
 	}
@@ -108,11 +110,11 @@ void ABoat::Drive(float InputX, float InputY)
 {
 	ApplyMovement(InputX, InputY);
 
-	if (InputX < 0)
+	if (InputX < 0 && BoatSpeed > 20.f)
 	{
 		L_WaterFX->Activate(false);
 	}
-	else if (InputX > 0)
+	else if (InputX > 0 && BoatSpeed > 20.f)
 	{
 		R_WaterFX->Activate(false);
 	}
