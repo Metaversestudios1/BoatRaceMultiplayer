@@ -52,8 +52,8 @@ void ABoat::Tick(float DeltaTime)
 
 	if (R_WaterFX && L_WaterFX && BoatSpeed <= 20.f)
 	{
-		R_WaterFX->Deactivate();
-		L_WaterFX->Deactivate();
+		R_BackWaterFX->Deactivate();
+		L_BackWaterFX->Deactivate();
 	}
 
 }
@@ -64,8 +64,8 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 
 	if (R_WaterFX && L_WaterFX && BoatSpeed > 20.f)
 	{
-		R_WaterFX->Activate(false);
-		L_WaterFX->Activate(false);
+		R_BackWaterFX->Activate(false);
+		L_BackWaterFX->Activate(false);
 	}
 
 	FVector ForwardForce = GetActorForwardVector() * ForceMultiplier * InputY;
@@ -110,16 +110,16 @@ void ABoat::Drive(float InputX, float InputY)
 
 	if (InputX < 0)
 	{
-		L_BackWaterFX->Activate(false);
+		L_WaterFX->Activate(false);
 	}
 	else if (InputX > 0)
 	{
-		R_BackWaterFX->Activate(false);
+		R_WaterFX->Activate(false);
 	}
 	else
 	{
-		R_BackWaterFX->Deactivate();
-		L_BackWaterFX->Deactivate();
+		R_WaterFX->Deactivate();
+		L_WaterFX->Deactivate();
 	}
 
 	if (!HasAuthority())
