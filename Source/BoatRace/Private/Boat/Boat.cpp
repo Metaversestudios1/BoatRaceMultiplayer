@@ -58,10 +58,26 @@ void ABoat::Tick(float DeltaTime)
 		L_BackWaterFX->Deactivate();
 	}
 
+	float InAir = GetActorLocation().Z;
+	if (InAir > -16000.f)
+	{
+		bInAir = true;
+		R_WaterFX->Deactivate();
+		L_WaterFX->Deactivate();
+		R_BackWaterFX->Deactivate();
+		L_BackWaterFX->Deactivate();
+	}
+	else
+	{
+		bInAir = false;
+	}
+
 }
 
 void ABoat::ApplyMovement(float InputX, float InputY)
 {
+	if (bInAir) return;
+
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
 	if (R_WaterFX && L_WaterFX && BoatSpeed > 20.f)
@@ -110,11 +126,11 @@ void ABoat::Drive(float InputX, float InputY)
 {
 	ApplyMovement(InputX, InputY);
 
-	if (InputX < 0 && BoatSpeed > 20.f)
+	if (!bInAir && InputX < 0 && BoatSpeed > 20.f)
 	{
 		L_WaterFX->Activate(false);
 	}
-	else if (InputX > 0 && BoatSpeed > 20.f)
+	else if (!bInAir && InputX > 0 && BoatSpeed > 20.f)
 	{
 		R_WaterFX->Activate(false);
 	}

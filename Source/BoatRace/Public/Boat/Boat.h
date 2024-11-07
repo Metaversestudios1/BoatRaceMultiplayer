@@ -86,6 +86,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Boat Movement")
 	float TurnSmoothness = 25.f;
 
+	bool bInAir = false;
+
 	UPROPERTY(VisibleInstanceOnly, Category = "Lap")
 	int32 NextCheckPoint = 1;
 
