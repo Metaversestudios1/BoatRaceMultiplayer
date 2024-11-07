@@ -59,7 +59,6 @@ void ABoat::Tick(float DeltaTime)
 	}
 
 	float InAir = GetActorLocation().Z;
-	UE_LOG(LogTemp, Warning, TEXT("Boat Z loc : %f"), InAir);
 	if (InAir > -16000.f)
 	{
 		bInAir = true;
@@ -77,9 +76,11 @@ void ABoat::Tick(float DeltaTime)
 
 void ABoat::ApplyMovement(float InputX, float InputY)
 {
+	if (bInAir) return;
+
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
-	if (R_WaterFX && L_WaterFX && !bInAir && BoatSpeed > 20.f)
+	if (R_WaterFX && L_WaterFX && BoatSpeed > 20.f)
 	{
 		R_BackWaterFX->Activate(false);
 		L_BackWaterFX->Activate(false);
