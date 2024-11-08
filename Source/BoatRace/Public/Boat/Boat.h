@@ -41,6 +41,7 @@ protected:
 
 private:
 	void ApplyMovement(float InputX, float InputY);
+	void CheckIfInAir();
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BoatMesh;
@@ -86,7 +87,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Boat Movement")
 	float TurnSmoothness = 25.f;
 
-	bool bInAir = false;
+	bool bIsInAir = false;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Lap")
 	int32 NextCheckPoint = 1;

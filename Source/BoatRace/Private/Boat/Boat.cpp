@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/BoatUI.h"
 #include "NiagaraComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ABoat::ABoat()
 {
@@ -50,47 +51,57 @@ void ABoat::Tick(float DeltaTime)
 		BoatUI->SetSpeed(BoatSpeed);
 	}
 
-	if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX && BoatSpeed <= 20.f)
+	CheckIfInAir();
+}
+
+void ABoat::CheckIfInAir()
+{
+	FVector Start = GetActorLocation();
+	FVector End = Start - FVector(0.0f, 0.0f, 100.0f);
+
+	FHitResult HitResult;
+	FCollisionQueryParams TraceParams(FName(TEXT("WaterTrace")), false, this);
+	TraceParams.bReturnPhysicalMaterial = false;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, TraceParams);
+
+	if (bHit)
 	{
-		R_WaterFX->Deactivate();
-		L_WaterFX->Deactivate();
-		R_BackWaterFX->Deactivate();
-		L_BackWaterFX->Deactivate();
+		FString ActorName =  HitResult.GetActor()->GetName();
+		if (ActorName.Contains(TEXT("River")))
+		{
+			bIsInAir = false;
+			if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX && BoatSpeed > 20.f)
+			{
+				R_BackWaterFX->Activate(false);
+				L_BackWaterFX->Activate(false);
+			}
+			else if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX && BoatSpeed <= 20.f)
+			{
+				R_WaterFX->Deactivate();
+				L_WaterFX->Deactivate();
+				R_BackWaterFX->Deactivate();
+				L_BackWaterFX->Deactivate();
+			}
+			return;
+		}
 	}
 
-	float InAir = GetActorLocation().Z;
-	if (InAir > -16000.f)
-	{
-		bInAir = true;
-		R_WaterFX->Deactivate();
-		L_WaterFX->Deactivate();
-		R_BackWaterFX->Deactivate();
-		L_BackWaterFX->Deactivate();
-	}
-	else
-	{
-		bInAir = false;
-	}
-
+	bIsInAir = true;
+	R_WaterFX->Deactivate();
+	L_WaterFX->Deactivate();
+	R_BackWaterFX->Deactivate();
+	L_BackWaterFX->Deactivate();
 }
 
 void ABoat::ApplyMovement(float InputX, float InputY)
 {
-	if (bInAir) return;
-
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
-
-	if (R_WaterFX && L_WaterFX && BoatSpeed > 20.f)
-	{
-		R_BackWaterFX->Activate(false);
-		L_BackWaterFX->Activate(false);
-	}
 
 	FVector ForwardForce = GetActorForwardVector() * ForceMultiplier * InputY;
 	BoatSpeed = GetVelocity().Size2D() * 0.036f;
 
 	float CurrentMaxSpeed = InputY > 0 ? MaxSpeed : MaxReverseSpeed;
-
 
 	if (BoatSpeed <= CurrentMaxSpeed || InputY <= 0)
 	{
@@ -122,15 +133,18 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 	Y = InputY;
 }
 
+
 void ABoat::Drive(float InputX, float InputY)
 {
+	if (bIsInAir) return;
+
 	ApplyMovement(InputX, InputY);
 
-	if (!bInAir && InputX < 0 && BoatSpeed > 20.f)
+	if (InputX < 0 && BoatSpeed > 20.f)
 	{
 		L_WaterFX->Activate(false);
 	}
-	else if (!bInAir && InputX > 0 && BoatSpeed > 20.f)
+	else if (InputX > 0 && BoatSpeed > 20.f)
 	{
 		R_WaterFX->Activate(false);
 	}
