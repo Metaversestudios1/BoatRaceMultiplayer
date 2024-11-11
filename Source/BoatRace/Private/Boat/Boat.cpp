@@ -41,6 +41,32 @@ ABoat::ABoat()
 }
 
 
+void ABoat::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Tags.Add(FName("Boat"));
+
+	if (BoatUIClass /* && IsLocallyControlled()*/)
+	{
+		BoatUI = Cast<UBoatUI>(CreateWidget<UUserWidget>(GetWorld(), BoatUIClass));
+		if (BoatUI)
+		{
+			BoatUI->AddToViewport();
+			BoatUI->SetCurrentLap(CurrentLap);
+		}
+	}
+
+	if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX)
+	{
+		R_WaterFX->Deactivate();
+		L_WaterFX->Deactivate();
+		L_BackWaterFX->Deactivate();
+		R_BackWaterFX->Deactivate();
+	}
+}
+
+
 void ABoat::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -52,6 +78,11 @@ void ABoat::Tick(float DeltaTime)
 	}
 
 	CheckIfInAir();
+
+	if (!bIsCountDownTransitionDone)
+	{
+		CountDownTransition(DeltaTime);
+	}
 }
 
 void ABoat::CheckIfInAir()
@@ -92,6 +123,44 @@ void ABoat::CheckIfInAir()
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
 	L_BackWaterFX->Deactivate();
+}
+
+void ABoat::CountDownTransition(float DeltaTime)
+{
+	CountDown -= DeltaTime;
+
+	FVector TargetOffset;
+	FRotator TargetRotation;
+	int32 Count = FMath::CeilToInt32(CountDown);
+
+	switch (Count)
+	{
+	case 3:
+		TargetOffset = FVector(1200, 400, -50);
+		TargetRotation = FRotator(0, 215, 0);
+		break;
+	case 2:
+		TargetOffset = FVector(1200, 0, -150);
+		TargetRotation = FRotator(0, 180, 0);
+		break;
+	case 1:
+		TargetOffset = FVector(750, -800, -100);
+		TargetRotation = FRotator(0, 100, 0);
+		break;
+	default:
+		TargetOffset = FVector(0, 0, 0);
+		TargetRotation = FRotator(0, 0, 0);
+		GetWorldTimerManager().SetTimer(CountTimer, this, &ThisClass::TransitionDone, 1.f, false);
+	}
+
+	float InterpSpeed = 2.5f;
+	SpringArm->SocketOffset = FMath::VInterpTo(SpringArm->SocketOffset, TargetOffset, DeltaTime, InterpSpeed);
+	Camera->SetRelativeRotation(FMath::RInterpTo(Camera->GetRelativeRotation(), TargetRotation, DeltaTime, InterpSpeed));
+}
+
+void ABoat::TransitionDone()
+{
+	bIsCountDownTransitionDone = true;
 }
 
 void ABoat::ApplyMovement(float InputX, float InputY)
@@ -205,32 +274,5 @@ void ABoat::UpdateTotalLaps(int32 LevelTotalLaps)
 	if (BoatUI)
 	{
 		BoatUI->SetTotalLaps(TotalLaps);
-	}
-}
-
-
-void ABoat::BeginPlay()
-{
-	Super::BeginPlay();
-
-	Tags.Add(FName("Boat"));
-
-	if (BoatUIClass /* && IsLocallyControlled()*/)
-	{
-	  BoatUI = Cast<UBoatUI>(CreateWidget<UUserWidget>(GetWorld(), BoatUIClass));
-		if (BoatUI)
-		{
-			BoatUI->AddToViewport();
-			BoatUI->SetCurrentLap(CurrentLap);
-		}
-	}
-
-	if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX)
-	{
-		R_WaterFX->Deactivate();
-		L_WaterFX->Deactivate();
-
-		L_BackWaterFX->Deactivate();
-		R_BackWaterFX->Deactivate();
 	}
 }
