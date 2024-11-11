@@ -42,6 +42,7 @@ protected:
 private:
 	void ApplyMovement(float InputX, float InputY);
 	void CheckIfInAir();
+	void CountDownTransition(float DeltaTime);
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BoatMesh;
@@ -51,6 +52,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
+
+	float CountDown = 3.f;
+	bool bIsCountDownTransitionDone = false;
+	FTimerHandle CountTimer;
+	void TransitionDone();
 
 	UPROPERTY(VisibleAnywhere)
 	class UBuoyancyComponent* Buoyancy;
