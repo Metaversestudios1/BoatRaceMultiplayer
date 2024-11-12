@@ -107,12 +107,17 @@ void ABoat::CheckIfInAir()
 				R_BackWaterFX->Activate(false);
 				L_BackWaterFX->Activate(false);
 			}
-			else if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX && BoatSpeed <= 20.f)
+			else if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX && BoatSpeed < 20.f)
 			{
 				R_WaterFX->Deactivate();
 				L_WaterFX->Deactivate();
 				R_BackWaterFX->Deactivate();
 				L_BackWaterFX->Deactivate();
+			}
+			if (!bSetBuoyancyData)
+			{
+				GetWorldTimerManager().SetTimer(BuoyancyTimer, this, &ThisClass::SetBuoyancyData, 2.f, false);
+				bSetBuoyancyData = true;
 			}
 			return;
 		}
@@ -123,6 +128,9 @@ void ABoat::CheckIfInAir()
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
 	L_BackWaterFX->Deactivate();
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.2;
+	bSetBuoyancyData = false;
+	GetWorldTimerManager().ClearTimer(BuoyancyTimer);
 }
 
 void ABoat::CountDownTransition(float DeltaTime)
@@ -161,6 +169,13 @@ void ABoat::CountDownTransition(float DeltaTime)
 void ABoat::TransitionDone()
 {
 	bIsCountDownTransitionDone = true;
+}
+
+void ABoat::SetBuoyancyData()
+{
+	UE_LOG(LogTemp, Error, TEXT("0.1"));
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.1;
+	bSetBuoyancyData = true;
 }
 
 void ABoat::ApplyMovement(float InputX, float InputY)

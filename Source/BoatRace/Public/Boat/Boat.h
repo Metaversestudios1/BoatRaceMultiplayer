@@ -61,6 +61,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UBuoyancyComponent* Buoyancy;
 
+	FTimerHandle BuoyancyTimer;
+	UPROPERTY(VisibleAnywhere)
+	bool bSetBuoyancyData = false;
+	void SetBuoyancyData();
+
 	float BoatSpeed = 0;
 
 	UPROPERTY(VisibleAnywhere)
