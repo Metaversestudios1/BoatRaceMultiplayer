@@ -128,7 +128,7 @@ void ABoat::CheckIfInAir()
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
 	L_BackWaterFX->Deactivate();
-	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.2;
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.3;
 	bSetBuoyancyData = false;
 	GetWorldTimerManager().ClearTimer(BuoyancyTimer);
 }
@@ -161,7 +161,7 @@ void ABoat::CountDownTransition(float DeltaTime)
 		GetWorldTimerManager().SetTimer(CountTimer, this, &ThisClass::TransitionDone, 1.f, false);
 	}
 
-	float InterpSpeed = 2.5f;
+	float InterpSpeed = 3.f;
 	SpringArm->SocketOffset = FMath::VInterpTo(SpringArm->SocketOffset, TargetOffset, DeltaTime, InterpSpeed);
 	Camera->SetRelativeRotation(FMath::RInterpTo(Camera->GetRelativeRotation(), TargetRotation, DeltaTime, InterpSpeed));
 }
@@ -173,8 +173,7 @@ void ABoat::TransitionDone()
 
 void ABoat::SetBuoyancyData()
 {
-	UE_LOG(LogTemp, Error, TEXT("0.1"));
-	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.1;
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.2;
 	bSetBuoyancyData = true;
 }
 
@@ -227,10 +226,24 @@ void ABoat::Drive(float InputX, float InputY)
 	if (InputX < 0 && BoatSpeed > 20.f)
 	{
 		L_WaterFX->Activate(false);
+		
+	/*	if (Buoyancy && Buoyancy->BuoyancyData.Pontoons.Num() > 0)
+		{
+			FSphericalPontoon& FirstPontoon = Buoyancy->BuoyancyData.Pontoons[0];
+			FirstPontoon.RelativeLocation.Y = -10;
+
+			FSphericalPontoon& ThirdtPontoon = Buoyancy->BuoyancyData.Pontoons[2];
+			ThirdtPontoon.RelativeLocation.Y = -10;
+		}*/
 	}
 	else if (InputX > 0 && BoatSpeed > 20.f)
 	{
 		R_WaterFX->Activate(false);
+
+		//if (Buoyancy && Buoyancy->BuoyancyData.Pontoons.Num() > 0)
+		//{
+		//	
+		//}
 	}
 	else
 	{
