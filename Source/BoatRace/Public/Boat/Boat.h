@@ -117,4 +117,18 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> BoatUIClass;
+
+
+	/****HandBrake****/
+public:
+	void SetHandbrakeActive(bool bActive);
+
+private:
+	bool bIsHandbrakeActive = false;  
+	void ApplyGradualDeceleration(float DeltaTime);  
+
+	float DecelerationRate = 500.f; 
+	float CurrentSpeed = 0.f;  
+
+
 };
