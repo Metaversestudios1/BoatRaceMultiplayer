@@ -37,4 +37,11 @@ private:
 	UInputAction* DriveAction;
 	void Drive(const FInputActionValue& Value);
 
+	//HandBrake
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Handbrake;
+	void ActivateHandbrake();
+	void DeactivateHandbrake();
+
 };

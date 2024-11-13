@@ -83,6 +83,11 @@ void ABoat::Tick(float DeltaTime)
 	{
 		CountDownTransition(DeltaTime);
 	}
+
+	if (bIsHandbrakeActive)
+	{
+		ApplyGradualDeceleration(DeltaTime);
+	}
 }
 
 void ABoat::CheckIfInAir()
@@ -177,6 +182,7 @@ void ABoat::SetBuoyancyData()
 	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.1;
 	bSetBuoyancyData = true;
 }
+
 
 void ABoat::ApplyMovement(float InputX, float InputY)
 {
@@ -289,5 +295,30 @@ void ABoat::UpdateTotalLaps(int32 LevelTotalLaps)
 	if (BoatUI)
 	{
 		BoatUI->SetTotalLaps(TotalLaps);
+	}
+}
+
+
+/**HandBrake**/
+void ABoat::SetHandbrakeActive(bool bActive)
+{
+	bIsHandbrakeActive = bActive;
+
+	if (bIsHandbrakeActive)
+	{
+		CurrentSpeed = BoatMesh->GetComponentVelocity().Size();
+	}
+}
+
+void ABoat::ApplyGradualDeceleration(float DeltaTime)
+{
+	if (CurrentSpeed > 0.f)
+	{
+		CurrentSpeed -= DecelerationRate * DeltaTime;  
+
+		CurrentSpeed = FMath::Max(CurrentSpeed, 4.f);
+
+		FVector CurrentVelocity = BoatMesh->GetComponentVelocity().GetSafeNormal() * CurrentSpeed;
+		BoatMesh->SetPhysicsLinearVelocity(CurrentVelocity);
 	}
 }

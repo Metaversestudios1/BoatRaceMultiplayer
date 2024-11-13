@@ -5,6 +5,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Interfaces/BoatInterface.h"
+#include "Boat/Boat.h"
 
 
 void ABoatPlayerController::BeginPlay()
@@ -29,6 +30,11 @@ void ABoatPlayerController::SetupInputComponent()
 	{
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABoatPlayerController::Look);
 		EnhancedInputComponent->BindAction(DriveAction, ETriggerEvent::Triggered, this, &ThisClass::Drive);
+		if (IA_Handbrake)
+		{
+			EnhancedInputComponent->BindAction(IA_Handbrake, ETriggerEvent::Triggered, this, &ABoatPlayerController::ActivateHandbrake);
+			EnhancedInputComponent->BindAction(IA_Handbrake, ETriggerEvent::Completed, this, &ABoatPlayerController::DeactivateHandbrake);
+		}
 	}
 }
 
@@ -48,5 +54,21 @@ void ABoatPlayerController::Drive(const FInputActionValue& Value)
 	if (BoatInterface)
 	{
 		BoatInterface->Drive(MoveAxis.X, MoveAxis.Y);
+	}
+}
+
+void ABoatPlayerController::ActivateHandbrake()
+{
+	if (ABoat* Boat = Cast<ABoat>(GetPawn()))
+	{
+		Boat->SetHandbrakeActive(true);
+	}
+}
+
+void ABoatPlayerController::DeactivateHandbrake()
+{
+	if (ABoat* Boat = Cast<ABoat>(GetPawn()))
+	{
+		Boat->SetHandbrakeActive(false);
 	}
 }
