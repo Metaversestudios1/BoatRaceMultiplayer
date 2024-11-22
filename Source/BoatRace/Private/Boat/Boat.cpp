@@ -243,6 +243,7 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 void ABoat::Drive(float InputX, float InputY)
 {
 	if (bIsInAir) return;
+	if (bIsHandbrakeActive) InputY = 0.f;
 
 	ApplyMovement(InputX, InputY);
 
