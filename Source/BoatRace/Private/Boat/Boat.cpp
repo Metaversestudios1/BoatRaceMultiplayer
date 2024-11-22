@@ -108,7 +108,7 @@ void ABoat::Tick(float DeltaTime)
 
 void ABoat::CheckIfInAir()
 {
-	FVector Start = GetActorLocation();
+	FVector Start = BoatMesh->GetRelativeLocation();
 	FVector End = Start - FVector(0.0f, 0.0f, 100.0f);
 
 	FHitResult HitResult;
@@ -145,7 +145,6 @@ void ABoat::CheckIfInAir()
 	}
 
 	bIsInAir = true;
-	//SpringArm->bUsePawnControlRotation = true;
 	R_WaterFX->Deactivate();
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
@@ -195,7 +194,6 @@ void ABoat::TransitionDone()
 
 void ABoat::SetBuoyancyData()
 {
-	//SpringArm->bUsePawnControlRotation = true;
 	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.3;
 	bSetBuoyancyData = true;
 }
@@ -272,11 +270,11 @@ void ABoat::Drive(float InputX, float InputY)
 		L_WaterFX->Deactivate();
 	}
 
-	FirstPontoon->RelativeLocation.Z = FMath::FInterpTo(FirstPontoon->RelativeLocation.Z, TargetFirstZLoc, DeltaTime, 2.0f);
-	ThirdPontoon->RelativeLocation.Z = FMath::FInterpTo(ThirdPontoon->RelativeLocation.Z, TargetThirdZLoc, DeltaTime, 2.0f);
+	FirstPontoon->RelativeLocation.Z = FMath::FInterpTo(FirstPontoon->RelativeLocation.Z, TargetFirstZLoc, DeltaTime, 1.0f);
+	ThirdPontoon->RelativeLocation.Z = FMath::FInterpTo(ThirdPontoon->RelativeLocation.Z, TargetThirdZLoc, DeltaTime, 1.0f);
 
-	SecondPontoon->RelativeLocation.Z = FMath::FInterpTo(SecondPontoon->RelativeLocation.Z, TargetSecondZLoc, DeltaTime, 2.0f);
-	FourthPontoon->RelativeLocation.Z = FMath::FInterpTo(FourthPontoon->RelativeLocation.Z, TargetFourthZLoc, DeltaTime, 2.0f);
+	SecondPontoon->RelativeLocation.Z = FMath::FInterpTo(SecondPontoon->RelativeLocation.Z, TargetSecondZLoc, DeltaTime, 1.0f);
+	FourthPontoon->RelativeLocation.Z = FMath::FInterpTo(FourthPontoon->RelativeLocation.Z, TargetFourthZLoc, DeltaTime, 1.0f);
 
 
 	if (!HasAuthority())
