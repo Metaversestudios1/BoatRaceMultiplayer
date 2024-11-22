@@ -220,7 +220,10 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 
 	if (FMath::Abs(InputX) > KINDA_SMALL_NUMBER)
 	{
-		if (InputY < 0.f)
+		FVector BoatVelocity = BoatMesh->GetPhysicsLinearVelocity();
+		bool bIsMovingBackward = FVector::DotProduct(BoatVelocity, GetActorForwardVector()) < 0;
+
+		if (InputY < 0.f && bIsMovingBackward)
 		{
 			InputX *= -1;
 		}
