@@ -5,8 +5,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Interfaces/BoatInterface.h"
-#include "Boat/Boat.h"
-
 
 void ABoatPlayerController::BeginPlay()
 {
@@ -60,17 +58,17 @@ void ABoatPlayerController::Drive(const FInputActionValue& Value)
 
 void ABoatPlayerController::ActivateHandbrake()
 {
-	if (ABoat* Boat = Cast<ABoat>(GetPawn()))
+	if (BoatInterface)
 	{
-		Boat->SetHandbrakeActive(true);
+		BoatInterface->SetHandbrakeActive(true);
 	}
 }
 
 void ABoatPlayerController::DeactivateHandbrake()
 {
-	if (ABoat* Boat = Cast<ABoat>(GetPawn()))
+	if (BoatInterface)
 	{
-		Boat->SetHandbrakeActive(false);
+		BoatInterface->SetHandbrakeActive(false);
 	}
 }
 
