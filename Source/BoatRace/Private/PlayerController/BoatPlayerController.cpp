@@ -35,6 +35,7 @@ void ABoatPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(IA_Handbrake, ETriggerEvent::Triggered, this, &ABoatPlayerController::ActivateHandbrake);
 			EnhancedInputComponent->BindAction(IA_Handbrake, ETriggerEvent::Completed, this, &ABoatPlayerController::DeactivateHandbrake);
 		}
+		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ThisClass::Rotate);
 	}
 }
 
@@ -70,5 +71,15 @@ void ABoatPlayerController::DeactivateHandbrake()
 	if (ABoat* Boat = Cast<ABoat>(GetPawn()))
 	{
 		Boat->SetHandbrakeActive(false);
+	}
+}
+
+void ABoatPlayerController::Rotate(const FInputActionValue& Value)
+{
+	const FVector2D RotateAxis = Value.Get<FVector2D>();
+
+	if (BoatInterface)
+	{
+		BoatInterface->RotateBoat(RotateAxis.Y, RotateAxis.X);
 	}
 }

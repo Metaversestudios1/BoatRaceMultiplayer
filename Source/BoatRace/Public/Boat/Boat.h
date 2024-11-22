@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Interfaces/BoatInterface.h"
+#include "BuoyancyTypes.h"
 #include "Boat.generated.h"
 
 class UNiagaraComponent;
@@ -20,6 +21,7 @@ public:
 	virtual void UpdateCheckPoint(const FName& CurrentBoxOverlapTag) override;
 	virtual void UpdateMaxCheckPoints(int32 MaxCheckPoints) override;
 	virtual void UpdateTotalLaps(int32 LevelTotalLaps) override;
+	virtual void RotateBoat(float InputY, float InputX) override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void Drive(float InputX, float InputY) override;
@@ -60,6 +62,18 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UBuoyancyComponent* Buoyancy;
+
+	FSphericalPontoon* FirstPontoon;
+	float FirstPontoonZLoc;
+
+	FSphericalPontoon* ThirdPontoon;
+	float ThirdPontoonZLoc;
+
+	FSphericalPontoon* SecondPontoon;
+	float SecondPontoonZLoc;
+
+	FSphericalPontoon* FourthPontoon;
+	float FourthPontoonZLoc;
 
 	FTimerHandle BuoyancyTimer;
 	UPROPERTY(VisibleAnywhere)
