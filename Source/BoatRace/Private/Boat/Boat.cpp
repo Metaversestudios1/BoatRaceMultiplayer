@@ -10,6 +10,7 @@
 #include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+
 ABoat::ABoat()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -64,6 +65,21 @@ void ABoat::BeginPlay()
 		L_BackWaterFX->Deactivate();
 		R_BackWaterFX->Deactivate();
 	}
+
+	if (Buoyancy && Buoyancy->BuoyancyData.Pontoons.Num() > 0)
+	{
+		FirstPontoon = &Buoyancy->BuoyancyData.Pontoons[0];
+		FirstPontoonZLoc = FirstPontoon->RelativeLocation.Z;
+
+		ThirdPontoon = &Buoyancy->BuoyancyData.Pontoons[2];
+		ThirdPontoonZLoc = ThirdPontoon->RelativeLocation.Z;
+
+		SecondPontoon = &Buoyancy->BuoyancyData.Pontoons[1];
+		SecondPontoonZLoc = SecondPontoon->RelativeLocation.Z;
+
+		FourthPontoon = &Buoyancy->BuoyancyData.Pontoons[3];
+		FourthPontoonZLoc = FourthPontoon->RelativeLocation.Z;
+	}
 }
 
 
@@ -104,7 +120,7 @@ void ABoat::CheckIfInAir()
 	if (bHit)
 	{
 		FString ActorName =  HitResult.GetActor()->GetName();
-		if (ActorName.Contains(TEXT("River")))
+		if (ActorName.Contains(TEXT("Water")))
 		{
 			bIsInAir = false;
 			if (R_WaterFX && L_WaterFX && R_BackWaterFX && L_BackWaterFX && BoatSpeed > 20.f)
@@ -129,11 +145,12 @@ void ABoat::CheckIfInAir()
 	}
 
 	bIsInAir = true;
+	//SpringArm->bUsePawnControlRotation = true;
 	R_WaterFX->Deactivate();
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
 	L_BackWaterFX->Deactivate();
-	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.2;
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.6;
 	bSetBuoyancyData = false;
 	GetWorldTimerManager().ClearTimer(BuoyancyTimer);
 }
@@ -178,8 +195,8 @@ void ABoat::TransitionDone()
 
 void ABoat::SetBuoyancyData()
 {
-	UE_LOG(LogTemp, Error, TEXT("0.1"));
-	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.1;
+	//SpringArm->bUsePawnControlRotation = true;
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.3;
 	bSetBuoyancyData = true;
 }
 
@@ -230,19 +247,36 @@ void ABoat::Drive(float InputX, float InputY)
 
 	ApplyMovement(InputX, InputY);
 
+	float TargetFirstZLoc = FirstPontoonZLoc;
+	float TargetThirdZLoc = ThirdPontoonZLoc;
+	float TargetSecondZLoc = SecondPontoonZLoc;
+	float TargetFourthZLoc = FourthPontoonZLoc;
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
+
 	if (InputX < 0 && BoatSpeed > 20.f)
 	{
 		L_WaterFX->Activate(false);
+		TargetFirstZLoc = FirstPontoonZLoc + 40.f;
+		TargetThirdZLoc = ThirdPontoonZLoc + 40.f;
 	}
 	else if (InputX > 0 && BoatSpeed > 20.f)
 	{
 		R_WaterFX->Activate(false);
+		TargetSecondZLoc = SecondPontoonZLoc + 40.f;
+		TargetFourthZLoc = FourthPontoonZLoc + 40.f;
 	}
 	else
 	{
 		R_WaterFX->Deactivate();
 		L_WaterFX->Deactivate();
 	}
+
+	FirstPontoon->RelativeLocation.Z = FMath::FInterpTo(FirstPontoon->RelativeLocation.Z, TargetFirstZLoc, DeltaTime, 2.0f);
+	ThirdPontoon->RelativeLocation.Z = FMath::FInterpTo(ThirdPontoon->RelativeLocation.Z, TargetThirdZLoc, DeltaTime, 2.0f);
+
+	SecondPontoon->RelativeLocation.Z = FMath::FInterpTo(SecondPontoon->RelativeLocation.Z, TargetSecondZLoc, DeltaTime, 2.0f);
+	FourthPontoon->RelativeLocation.Z = FMath::FInterpTo(FourthPontoon->RelativeLocation.Z, TargetFourthZLoc, DeltaTime, 2.0f);
+
 
 	if (!HasAuthority())
 	{
@@ -298,6 +332,14 @@ void ABoat::UpdateTotalLaps(int32 LevelTotalLaps)
 	}
 }
 
+void ABoat::RotateBoat(float InputY, float InputX)
+{
+	if (!bIsInAir && BoatMesh) return;
+
+	FVector Torque = BoatMesh->GetRightVector() * InputY;
+	BoatMesh->AddTorqueInRadians(Torque * 5000000);
+	BoatMesh->AddTorqueInRadians(FVector(-InputX * 3000000, 0, 0));
+}
 
 /**HandBrake**/
 void ABoat::SetHandbrakeActive(bool bActive)

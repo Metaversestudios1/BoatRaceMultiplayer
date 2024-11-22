@@ -26,4 +26,5 @@ public:
 	virtual void UpdateCheckPoint(const FName& CurrentBoxOverlapTag) = 0;
 	virtual void UpdateMaxCheckPoints(int32 MaxCheckPoints) = 0;
 	virtual void UpdateTotalLaps(int32 LevelTotalLaps) = 0;
+	virtual void RotateBoat(float InputY, float InputX) = 0;
 };
