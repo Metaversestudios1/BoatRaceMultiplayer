@@ -22,6 +22,7 @@ public:
 	virtual void UpdateMaxCheckPoints(int32 MaxCheckPoints) override;
 	virtual void UpdateTotalLaps(int32 LevelTotalLaps) override;
 	virtual void RotateBoat(float InputY, float InputX) override;
+	virtual void SetHandbrakeActive(bool bActive)  override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void Drive(float InputX, float InputY) override;
@@ -134,8 +135,6 @@ private:
 
 
 	/****HandBrake****/
-public:
-	void SetHandbrakeActive(bool bActive);
 
 private:
 	bool bIsHandbrakeActive = false;  
