@@ -149,7 +149,7 @@ void ABoat::CheckIfInAir()
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
 	L_BackWaterFX->Deactivate();
-	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.6;
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 1.5;
 	bSetBuoyancyData = false;
 	GetWorldTimerManager().ClearTimer(BuoyancyTimer);
 }
@@ -194,7 +194,7 @@ void ABoat::TransitionDone()
 
 void ABoat::SetBuoyancyData()
 {
-	Buoyancy->BuoyancyData.BuoyancyCoefficient = 0.3;
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 1.2;
 	bSetBuoyancyData = true;
 }
 
@@ -333,11 +333,11 @@ void ABoat::UpdateTotalLaps(int32 LevelTotalLaps)
 
 void ABoat::RotateBoat(float InputY, float InputX)
 {
-	if (!bIsInAir && BoatMesh) return;
+	if (BoatMesh == nullptr && !bIsInAir) return;
 
 	FVector Torque = BoatMesh->GetRightVector() * InputY;
-	BoatMesh->AddTorqueInRadians(Torque * 5000000);
-	BoatMesh->AddTorqueInRadians(FVector(-InputX * 3000000, 0, 0));
+	BoatMesh->AddTorqueInRadians(Torque * 25000000);
+	BoatMesh->AddTorqueInRadians(FVector(-InputX * 12000000, 0, 0));
 }
 
 /**HandBrake**/

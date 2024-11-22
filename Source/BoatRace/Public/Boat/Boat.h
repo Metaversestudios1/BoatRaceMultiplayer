@@ -96,13 +96,13 @@ private:
 	UNiagaraComponent* R_BackWaterFX;
 
 	UPROPERTY(EditAnywhere, Category = "Boat Movement")
-	float ForceMultiplier = 80000.f;
-
-	UPROPERTY(EditAnywhere)
-	float LateralDampingFactor = 100.f;
+	float ForceMultiplier = 350000.f;
 
 	UPROPERTY(EditAnywhere, Category = "Boat Movement")
-	float MaxSpeed = 80.f;
+	float LateralDampingFactor = 300.f;
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float MaxSpeed = 150.f;
 
 	UPROPERTY(EditAnywhere, Category = "Boat Movement")
 	float MaxReverseSpeed = 20.f;
