@@ -183,7 +183,6 @@ void ABoat::SetBuoyancyData()
 	bSetBuoyancyData = true;
 }
 
-
 void ABoat::ApplyMovement(float InputX, float InputY)
 {
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
@@ -222,7 +221,6 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 	X = InputX;
 	Y = InputY;
 }
-
 
 void ABoat::Drive(float InputX, float InputY)
 {
@@ -314,11 +312,26 @@ void ABoat::ApplyGradualDeceleration(float DeltaTime)
 {
 	if (CurrentSpeed > 0.f)
 	{
-		CurrentSpeed -= DecelerationRate * DeltaTime;  
-
-		CurrentSpeed = FMath::Max(CurrentSpeed, 4.f);
+		CurrentSpeed -= DecelerationRate * DeltaTime; 
+		CurrentSpeed = FMath::Max(CurrentSpeed, MinDriftSpeed);
 
 		FVector CurrentVelocity = BoatMesh->GetComponentVelocity().GetSafeNormal() * CurrentSpeed;
 		BoatMesh->SetPhysicsLinearVelocity(CurrentVelocity);
+
+		ApplyDrift(DeltaTime);
 	}
+}
+
+void ABoat::ApplyDrift(float DeltaTime)
+{
+	if (!bIsHandbrakeActive || CurrentSpeed <= MinDriftSpeed)
+	{
+		return;  
+	}
+
+	FVector RightVector = BoatMesh->GetRightVector();
+
+	FVector DriftForce = RightVector * LateralDriftForce * DeltaTime;
+
+	BoatMesh->AddForce(DriftForce, NAME_None, true);
 }

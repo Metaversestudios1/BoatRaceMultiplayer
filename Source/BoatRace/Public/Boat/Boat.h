@@ -126,9 +126,13 @@ public:
 private:
 	bool bIsHandbrakeActive = false;  
 	void ApplyGradualDeceleration(float DeltaTime);  
+	void ApplyDrift(float DeltaTime);
 
 	float DecelerationRate = 500.f; 
-	float CurrentSpeed = 0.f;  
+	float CurrentSpeed = 0.f; 
+
+	float LateralDriftForce = 1500.f;
+	float MinDriftSpeed = 4.f;
 
 
 };
