@@ -145,6 +145,7 @@ void ABoat::CheckIfInAir()
 	}
 
 	bIsInAir = true;
+	BoatMesh->AddForce(BoatGravity, NAME_None, true);
 	R_WaterFX->Deactivate();
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
@@ -255,14 +256,14 @@ void ABoat::Drive(float InputX, float InputY)
 	if (InputX < 0 && BoatSpeed > 20.f)
 	{
 		L_WaterFX->Activate(false);
-		TargetFirstZLoc = FirstPontoonZLoc + 40.f;
-		TargetThirdZLoc = ThirdPontoonZLoc + 40.f;
+		TargetFirstZLoc = FirstPontoonZLoc + BoatTurnSink;
+		TargetThirdZLoc = ThirdPontoonZLoc + BoatTurnSink;
 	}
 	else if (InputX > 0 && BoatSpeed > 20.f)
 	{
 		R_WaterFX->Activate(false);
-		TargetSecondZLoc = SecondPontoonZLoc + 40.f;
-		TargetFourthZLoc = FourthPontoonZLoc + 40.f;
+		TargetSecondZLoc = SecondPontoonZLoc + BoatTurnSink;
+		TargetFourthZLoc = FourthPontoonZLoc + BoatTurnSink;
 	}
 	else
 	{

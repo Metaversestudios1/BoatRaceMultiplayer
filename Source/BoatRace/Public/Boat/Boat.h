@@ -95,23 +95,29 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UNiagaraComponent* R_BackWaterFX;
 
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float ForceMultiplier = 350000.f;
 
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float LateralDampingFactor = 300.f;
 
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float MaxSpeed = 150.f;
 
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float MaxReverseSpeed = 20.f;
 
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float TurnRate = 2.5f;
 
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float TurnSmoothness = 25.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
+	FVector BoatGravity = FVector(0.f, 0.f, -700.f);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
+	float BoatTurnSink = 50.f;
 
 	bool bIsInAir = false;
 
