@@ -150,7 +150,7 @@ void ABoat::CheckIfInAir()
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
 	L_BackWaterFX->Deactivate();
-	Buoyancy->BuoyancyData.BuoyancyCoefficient = 1.5;
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 1.7;
 	bSetBuoyancyData = false;
 	GetWorldTimerManager().ClearTimer(BuoyancyTimer);
 }
@@ -195,7 +195,7 @@ void ABoat::TransitionDone()
 
 void ABoat::SetBuoyancyData()
 {
-	Buoyancy->BuoyancyData.BuoyancyCoefficient = 1.2;
+	Buoyancy->BuoyancyData.BuoyancyCoefficient = 1.3;
 	bSetBuoyancyData = true;
 }
 
