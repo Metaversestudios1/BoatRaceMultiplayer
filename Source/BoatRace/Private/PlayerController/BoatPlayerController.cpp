@@ -45,16 +45,28 @@ void ABoatPlayerController::Look(const FInputActionValue& Value)
 	AddPitchInput(LookAxis.Y);
 }
 
-
 void ABoatPlayerController::Drive(const FInputActionValue& Value)
 {
-	const FVector2D MoveAxis = Value.Get<FVector2D>();
+	FVector2D MoveAxis = Value.Get<FVector2D>();
+	float InputX = MoveAxis.X; 
+	float InputY = MoveAxis.Y; 
 
+	if (IsInputKeyDown(EKeys::W) && IsInputKeyDown(EKeys::S))
+	{
+		InputY = 0.f; 
+	}
+
+	if (IsInputKeyDown(EKeys::A) && IsInputKeyDown(EKeys::D))
+	{
+		InputX = 0.f;
+	}
+	
 	if (BoatInterface)
 	{
-		BoatInterface->Drive(MoveAxis.X, MoveAxis.Y);
+		BoatInterface->Drive(InputX, InputY);
 	}
 }
+
 
 void ABoatPlayerController::ActivateHandbrake()
 {
