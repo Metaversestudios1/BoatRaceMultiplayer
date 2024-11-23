@@ -147,11 +147,11 @@ private:
 	void ApplyGradualDeceleration(float DeltaTime);  
 	void ApplyDrift(float DeltaTime);
 
-	float DecelerationRate = 500.f; 
+	float DecelerationRate = 500.f; //Determines how quickly forward momentum is reduced.
 	float CurrentSpeed = 0.f; 
 
-	float LateralDriftForce = 1500.f;
-	float MinDriftSpeed = 4.f;
+	float LateralDriftForce = 1500.f; //Controls how intense the drift effect is.
+	float MinDriftSpeed = 4.f; //Prevents the boat from coming to a complete stop during a drift.
 
 
 };
