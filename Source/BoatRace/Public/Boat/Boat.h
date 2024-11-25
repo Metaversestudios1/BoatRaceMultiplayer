@@ -23,6 +23,9 @@ public:
 	virtual void UpdateTotalLaps(int32 LevelTotalLaps) override;
 	virtual void RotateBoat(float InputY, float InputX) override;
 	virtual void SetHandbrakeActive(bool bActive)  override;
+	virtual UBoostComponent* GetBoostComponent() const override { return BoostComponent; }
+
+
 
 	UFUNCTION(BlueprintCallable)
 	virtual void Drive(float InputX, float InputY) override;
@@ -152,6 +155,11 @@ private:
 
 	float LateralDriftForce = 1500.f; //Controls how intense the drift effect is.
 	float MinDriftSpeed = 4.f; //Prevents the boat from coming to a complete stop during a drift.
+
+private:	//boost
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	class UBoostComponent* BoostComponent;
 
 
 };
