@@ -4,6 +4,7 @@
 #include "PlayerController/BoatPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Boat/BoostComponent.h"
 #include "Interfaces/BoatInterface.h"
 
 void ABoatPlayerController::BeginPlay()
@@ -32,6 +33,10 @@ void ABoatPlayerController::SetupInputComponent()
 		{
 			EnhancedInputComponent->BindAction(IA_Handbrake, ETriggerEvent::Triggered, this, &ABoatPlayerController::ActivateHandbrake);
 			EnhancedInputComponent->BindAction(IA_Handbrake, ETriggerEvent::Completed, this, &ABoatPlayerController::DeactivateHandbrake);
+		}
+		if (IA_Boost)
+		{
+			EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Triggered, this, &ABoatPlayerController::ActivateBoost);
 		}
 		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ThisClass::Rotate);
 	}
@@ -93,3 +98,16 @@ void ABoatPlayerController::Rotate(const FInputActionValue& Value)
 		BoatInterface->RotateBoat(RotateAxis.Y, RotateAxis.X);
 	}
 }
+
+void ABoatPlayerController::ActivateBoost()
+{
+	if (BoatInterface)
+	{
+		UBoostComponent* BoostComp = BoatInterface->GetBoostComponent();
+		if (BoostComp)
+		{
+			BoostComp->ActivateBoost();
+		}
+	}
+}
+
