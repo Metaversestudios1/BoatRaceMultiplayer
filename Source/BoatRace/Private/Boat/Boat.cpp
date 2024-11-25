@@ -254,11 +254,11 @@ void ABoat::Drive(float InputX, float InputY)
 
 	ApplyMovement(InputX, InputY);
 
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
 	float TargetFirstZLoc = FirstPontoonZLoc;
 	float TargetThirdZLoc = ThirdPontoonZLoc;
 	float TargetSecondZLoc = SecondPontoonZLoc;
 	float TargetFourthZLoc = FourthPontoonZLoc;
-	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
 	if (InputX < 0 && BoatSpeed > 20.f)
 	{
@@ -284,9 +284,16 @@ void ABoat::Drive(float InputX, float InputY)
 	FourthPontoon->RelativeLocation.Z = FMath::FInterpTo(FourthPontoon->RelativeLocation.Z, TargetFourthZLoc, DeltaTime, 1.0f);
 
 	//Rotate Handle
-	FRotator CurrentRotation = BoatHandle->GetRelativeRotation();
-	float NewYaw = FMath::Clamp(CurrentRotation.Yaw + InputX * HandleRotationRate * GetWorld()->GetDeltaSeconds(), -25.0f, 25.0f);
-	BoatHandle->SetRelativeRotation(FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll));
+	if (InputX != 0)
+	{
+		FRotator CurrentRotation = BoatHandle->GetRelativeRotation();
+		float NewYaw = FMath::Clamp(CurrentRotation.Yaw + InputX * HandleRotationRate * DeltaTime, -25.0f, 25.0f);
+		BoatHandle->SetRelativeRotation(FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll));
+	}
+	else
+	{
+		BoatHandle->SetRelativeRotation(FMath::RInterpTo(BoatHandle->GetRelativeRotation(), FRotator(0, 0, 0), DeltaTime, 1));
+	}
 
 	if (!HasAuthority())
 	{
