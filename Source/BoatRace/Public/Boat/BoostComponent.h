@@ -22,7 +22,7 @@ protected:
 public: 
 	void ActivateBoost();
 	void DeactivateBoost();
-	float BoostMultiplier = 10.0f;
+	float BoostMultiplier = 20.0f;
 	bool IsBoostActive() const { return bIsBoosting; }
 
 private:
