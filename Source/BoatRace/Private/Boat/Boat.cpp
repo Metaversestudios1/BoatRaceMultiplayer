@@ -22,6 +22,12 @@ ABoat::ABoat()
 	BoatMesh->SetSimulatePhysics(true);
 	BoatMesh->SetIsReplicated(true);
 
+	BoatHandle = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Handle"));
+	BoatHandle->SetupAttachment(BoatMesh);
+
+	BoatCharacter = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Character"));
+	BoatCharacter->SetupAttachment(BoatMesh);
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm"));
 	SpringArm->SetupAttachment(GetRootComponent());
 
@@ -248,11 +254,11 @@ void ABoat::Drive(float InputX, float InputY)
 
 	ApplyMovement(InputX, InputY);
 
+	float DeltaTime = GetWorld()->GetDeltaSeconds();
 	float TargetFirstZLoc = FirstPontoonZLoc;
 	float TargetThirdZLoc = ThirdPontoonZLoc;
 	float TargetSecondZLoc = SecondPontoonZLoc;
 	float TargetFourthZLoc = FourthPontoonZLoc;
-	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
 	if (InputX < 0 && BoatSpeed > 20.f)
 	{
@@ -274,10 +280,20 @@ void ABoat::Drive(float InputX, float InputY)
 
 	FirstPontoon->RelativeLocation.Z = FMath::FInterpTo(FirstPontoon->RelativeLocation.Z, TargetFirstZLoc, DeltaTime, 1.0f);
 	ThirdPontoon->RelativeLocation.Z = FMath::FInterpTo(ThirdPontoon->RelativeLocation.Z, TargetThirdZLoc, DeltaTime, 1.0f);
-
 	SecondPontoon->RelativeLocation.Z = FMath::FInterpTo(SecondPontoon->RelativeLocation.Z, TargetSecondZLoc, DeltaTime, 1.0f);
 	FourthPontoon->RelativeLocation.Z = FMath::FInterpTo(FourthPontoon->RelativeLocation.Z, TargetFourthZLoc, DeltaTime, 1.0f);
 
+	//Rotate Handle
+	if (InputX != 0)
+	{
+		FRotator CurrentRotation = BoatHandle->GetRelativeRotation();
+		float NewYaw = FMath::Clamp(CurrentRotation.Yaw + InputX * HandleRotationRate * DeltaTime, -25.0f, 25.0f);
+		BoatHandle->SetRelativeRotation(FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll));
+	}
+	else
+	{
+		BoatHandle->SetRelativeRotation(FMath::RInterpTo(BoatHandle->GetRelativeRotation(), FRotator(0, 0, 0), DeltaTime, 1));
+	}
 
 	if (!HasAuthority())
 	{
@@ -335,11 +351,19 @@ void ABoat::UpdateTotalLaps(int32 LevelTotalLaps)
 
 void ABoat::RotateBoat(float InputY, float InputX)
 {
-	if (BoatMesh == nullptr && !bIsInAir) return;
+	if (!bIsInAir || !BoatMesh) return;
 
-	FVector Torque = BoatMesh->GetRightVector() * InputY;
-	BoatMesh->AddTorqueInRadians(Torque * 25000000);
-	BoatMesh->AddTorqueInRadians(FVector(-InputX * 12000000, 0, 0));
+	if (InputY != 0)
+	{
+		FVector FrontTorque = BoatMesh->GetRightVector() * InputY;
+		BoatMesh->AddTorqueInRadians(FrontTorque * BoatPitchRotation, NAME_None, true);
+	}
+
+	if (InputX != 0)
+	{
+		FVector RightTorque = BoatMesh->GetForwardVector() * -InputX;
+		BoatMesh->AddTorqueInRadians(RightTorque * BoatRollRotation, NAME_None, true);
+	}
 }
 
 /**HandBrake**/

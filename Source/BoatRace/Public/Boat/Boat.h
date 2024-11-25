@@ -51,6 +51,12 @@ private:
 	UStaticMeshComponent* BoatMesh;
 
 	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* BoatHandle;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USkeletalMeshComponent* BoatCharacter;
+
+	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
@@ -118,6 +124,15 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float BoatTurnSink = 50.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
+	float HandleRotationRate = 30.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
+	float BoatPitchRotation = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
+	float BoatRollRotation = 5.f;
 
 	bool bIsInAir = false;
 
