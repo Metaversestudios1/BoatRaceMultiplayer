@@ -2,10 +2,10 @@
 
 
 #include "Boat/Boat.h"
+#include "Boat/BoatProperties.h"
 #include "GameFrameWork/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "BuoyancyComponent.h"
-#include "Boat/BoostComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/BoatUI.h"
 #include "NiagaraComponent.h"
@@ -17,6 +17,8 @@ ABoat::ABoat()
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 	SetReplicateMovement(true);
+
+	BoatProperties = CreateDefaultSubobject<UBoatProperties>(TEXT("BoatProperties"));
 
 	BoatMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Boat"));
 	RootComponent = BoatMesh;
@@ -47,7 +49,6 @@ ABoat::ABoat()
 	R_BackWaterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R Back Water FX"));
 	R_BackWaterFX->SetupAttachment(GetRootComponent());
 
-	BoostComponent = CreateDefaultSubobject<UBoostComponent>(TEXT("BoostComponent"));
 }
 
 
@@ -210,16 +211,10 @@ void ABoat::SetBuoyancyData()
 
 void ABoat::ApplyMovement(float InputX, float InputY)
 {
+	if (!BoatProperties) return;
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
-	//boost
-	float FinalForceMultiplier = ForceMultiplier;
-	if (BoostComponent && BoostComponent->IsBoostActive())
-	{
-		FinalForceMultiplier *= BoostComponent->BoostMultiplier; 
-	}
-
-	FVector ForwardForce = GetActorForwardVector() * FinalForceMultiplier  * InputY;
+	FVector ForwardForce = GetActorForwardVector() * BoatProperties->ForceMultiplier * InputY;
 	BoatSpeed = GetVelocity().Size2D() * 0.036f;
 
 	float CurrentMaxSpeed = InputY > 0 ? MaxSpeed : MaxReverseSpeed;
@@ -413,4 +408,10 @@ void ABoat::ApplyDrift(float DeltaTime)
 	FVector DriftForce = RightVector * LateralDriftForce * DeltaTime;
 
 	BoatMesh->AddForce(DriftForce, NAME_None, true);
+}
+
+void ABoat::SetBoostActive(bool bBoostActive)
+{
+	if (!BoatProperties) return;
+	BoatProperties->BoostActivate(bBoostActive);
 }

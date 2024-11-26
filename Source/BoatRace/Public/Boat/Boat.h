@@ -23,7 +23,7 @@ public:
 	virtual void UpdateTotalLaps(int32 LevelTotalLaps) override;
 	virtual void RotateBoat(float InputY, float InputX) override;
 	virtual void SetHandbrakeActive(bool bActive)  override;
-	virtual UBoostComponent* GetBoostComponent() const override { return BoostComponent; }
+	virtual void SetBoostActive(bool bBoostActive) override;
 
 
 
@@ -49,6 +49,9 @@ private:
 	void ApplyMovement(float InputX, float InputY);
 	void CheckIfInAir();
 	void CountDownTransition(float DeltaTime);
+
+	UPROPERTY(VisibleAnywhere)
+	class UBoatProperties* BoatProperties;
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BoatMesh;
@@ -103,9 +106,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UNiagaraComponent* R_BackWaterFX;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float ForceMultiplier = 350000.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float LateralDampingFactor = 300.f;
@@ -170,11 +170,6 @@ private:
 
 	float LateralDriftForce = 1500.f; //Controls how intense the drift effect is.
 	float MinDriftSpeed = 4.f; //Prevents the boat from coming to a complete stop during a drift.
-
-private:	//boost
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class UBoostComponent* BoostComponent;
 
 
 };

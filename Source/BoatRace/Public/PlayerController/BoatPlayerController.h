@@ -49,6 +49,6 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_Boost;
-
 	void ActivateBoost();
+	void DeactivateBoost();
 };
