@@ -5,6 +5,7 @@
 #include "GameFrameWork/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "BuoyancyComponent.h"
+#include "Boat/BoostComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/BoatUI.h"
 #include "NiagaraComponent.h"
@@ -45,6 +46,8 @@ ABoat::ABoat()
 	L_BackWaterFX->SetupAttachment(GetRootComponent());
 	R_BackWaterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R Back Water FX"));
 	R_BackWaterFX->SetupAttachment(GetRootComponent());
+
+	BoostComponent = CreateDefaultSubobject<UBoostComponent>(TEXT("BoostComponent"));
 }
 
 
@@ -209,7 +212,14 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 {
 	float DeltaTime = GetWorld()->GetDeltaSeconds();
 
-	FVector ForwardForce = GetActorForwardVector() * ForceMultiplier * InputY;
+	//boost
+	float FinalForceMultiplier = ForceMultiplier;
+	if (BoostComponent && BoostComponent->IsBoostActive())
+	{
+		FinalForceMultiplier *= BoostComponent->BoostMultiplier; 
+	}
+
+	FVector ForwardForce = GetActorForwardVector() * FinalForceMultiplier  * InputY;
 	BoatSpeed = GetVelocity().Size2D() * 0.036f;
 
 	float CurrentMaxSpeed = InputY > 0 ? MaxSpeed : MaxReverseSpeed;

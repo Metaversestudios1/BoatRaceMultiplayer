@@ -46,4 +46,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* RotateAction;
 	void Rotate(const FInputActionValue& Value);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Boost;
+
+	void ActivateBoost();
 };

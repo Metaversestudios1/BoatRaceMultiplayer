@@ -6,6 +6,9 @@
 #include "UObject/Interface.h"
 #include "BoatInterface.generated.h"
 
+
+class UBoostComponent;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UBoatInterface : public UInterface
@@ -28,4 +31,6 @@ public:
 	virtual void UpdateTotalLaps(int32 LevelTotalLaps) = 0;
 	virtual void RotateBoat(float InputY, float InputX) = 0;
 	virtual void SetHandbrakeActive(bool bActive) = 0;
+	virtual UBoostComponent* GetBoostComponent() const = 0;
+
 };
