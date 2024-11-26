@@ -49,6 +49,10 @@ ABoat::ABoat()
 	R_BackWaterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("R Back Water FX"));
 	R_BackWaterFX->SetupAttachment(GetRootComponent());
 
+	BoostTrailEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Boost Trail Effect"));
+	BoostTrailEffect->SetupAttachment(GetRootComponent());
+	BoostTrailEffect->Deactivate(); 
+
 }
 
 
@@ -116,6 +120,10 @@ void ABoat::Tick(float DeltaTime)
 	{
 		ApplyGradualDeceleration(DeltaTime);
 	}
+
+	UpdateBoostFuelUI();
+
+
 }
 
 void ABoat::CheckIfInAir()
@@ -416,6 +424,28 @@ void ABoat::ApplyDrift(float DeltaTime)
 
 void ABoat::SetBoostActive(bool bBoostActive)
 {
-	if (!BoatProperties) return;
-	BoatProperties->BoostActivate(bBoostActive);
+
+	if (BoatProperties)
+	{
+		BoatProperties->BoostActivate(bBoostActive);
+
+		if (bBoostActive) 
+		{
+			if (BoostTrailEffect) BoostTrailEffect->Activate(true);
+		}
+		else
+		{
+			if (BoostTrailEffect) BoostTrailEffect->Deactivate();
+		}
+		UpdateBoostFuelUI();
+	}
+}
+
+void ABoat::UpdateBoostFuelUI()
+{
+	if (BoatUI && BoatProperties)
+	{
+		float CurrentFuel = BoatProperties->CurrentBoostFuel;
+		BoatUI->UpdateBoostFuel(CurrentFuel);
+	}
 }
