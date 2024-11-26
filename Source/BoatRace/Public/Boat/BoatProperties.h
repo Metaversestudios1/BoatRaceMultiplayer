@@ -17,13 +17,13 @@ public:
 	UBoatProperties();
 	friend class ABoat;
 
-
 protected:
 	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 
 
 private:
-	void BoostActivate(bool bBoostActive);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float ForceMultiplier = 350000.f;
@@ -61,5 +61,27 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float BoatRollRotation = 5.f;
+
+	// Boost Mechanics
+	void BoostActivate(bool bBoostActive);
+	void EndBoost();
+	void EndCooldown();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boost")
+	float BoostDuration = 3.f;  
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boost")
+	float BoostCooldown = 5.f;  
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boost")
+	float MaxBoostFuel = 100.f;  
+
+	UPROPERTY(VisibleAnywhere, Category = "Boost")
+	float CurrentBoostFuel = 100.f;  
+	bool bIsBoosting = false;       
+	bool bIsCooldownActive = false; 
+
+	FTimerHandle BoostTimerHandle;
+	FTimerHandle CooldownTimerHandle;
 
 };

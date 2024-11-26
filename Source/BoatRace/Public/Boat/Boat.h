@@ -49,6 +49,7 @@ private:
 	void ApplyMovement(float InputX, float InputY);
 	void CheckIfInAir();
 	void CountDownTransition(float DeltaTime);
+	void UpdateBoostFuelUI();
 
 	UPROPERTY(VisibleAnywhere)
 	class UBoatProperties* BoatProperties;
@@ -95,17 +96,20 @@ private:
 
 	float BoatSpeed = 0;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	UNiagaraComponent* L_WaterFX;
 
-	UPROPERTY(VisibleAnywhere)
-	UNiagaraComponent* R_WaterFX;	
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+	UNiagaraComponent* R_WaterFX;
 	
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	UNiagaraComponent* L_BackWaterFX;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	UNiagaraComponent* R_BackWaterFX;
+
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+	UNiagaraComponent* BoostTrailEffect;
 
 	bool bIsInAir = false;
 
