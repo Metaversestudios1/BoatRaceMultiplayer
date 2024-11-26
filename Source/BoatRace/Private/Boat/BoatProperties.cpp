@@ -1,4 +1,6 @@
+
 #include "Boat/BoatProperties.h"
+
 
 UBoatProperties::UBoatProperties()
 {
@@ -12,6 +14,7 @@ void UBoatProperties::BeginPlay()
 	TempForceMultiplier = ForceMultiplier;
 }
 
+
 void UBoatProperties::BoostActivate(bool bBoostActive)
 {
 	if (bBoostActive)
@@ -23,4 +26,3 @@ void UBoatProperties::BoostActivate(bool bBoostActive)
 		ForceMultiplier = TempForceMultiplier;
 	}
 }
-
