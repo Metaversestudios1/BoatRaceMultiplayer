@@ -107,36 +107,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UNiagaraComponent* R_BackWaterFX;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float LateralDampingFactor = 300.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float MaxSpeed = 150.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float MaxReverseSpeed = 20.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float TurnRate = 2.5f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float TurnSmoothness = 25.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	FVector BoatGravity = FVector(0.f, 0.f, -700.f);
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float BoatTurnSink = 50.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float HandleRotationRate = 30.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float BoatPitchRotation = 5.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float BoatRollRotation = 5.f;
-
 	bool bIsInAir = false;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Lap")
@@ -159,7 +129,6 @@ private:
 
 
 	/****HandBrake****/
-
 private:
 	bool bIsHandbrakeActive = false;  
 	void ApplyGradualDeceleration(float DeltaTime);  
@@ -170,6 +139,4 @@ private:
 
 	float LateralDriftForce = 1500.f; //Controls how intense the drift effect is.
 	float MinDriftSpeed = 4.f; //Prevents the boat from coming to a complete stop during a drift.
-
-
 };
