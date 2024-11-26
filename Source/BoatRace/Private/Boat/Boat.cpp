@@ -97,6 +97,8 @@ void ABoat::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+	if (!BoatProperties) return;
+
 	BoatSpeed = (GetVelocity().Size2D()) * 0.036;
 	if (BoatUI)
 	{
@@ -155,7 +157,7 @@ void ABoat::CheckIfInAir()
 	}
 
 	bIsInAir = true;
-	BoatMesh->AddForce(BoatGravity, NAME_None, true);
+	BoatMesh->AddForce(BoatProperties->BoatGravity, NAME_None, true);
 	R_WaterFX->Deactivate();
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
@@ -217,11 +219,11 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 	FVector ForwardForce = GetActorForwardVector() * BoatProperties->ForceMultiplier * InputY;
 	BoatSpeed = GetVelocity().Size2D() * 0.036f;
 
-	float CurrentMaxSpeed = InputY > 0 ? MaxSpeed : MaxReverseSpeed;
+	float CurrentMaxSpeed = InputY > 0 ? BoatProperties->MaxSpeed : BoatProperties->MaxReverseSpeed;
 
 	if (BoatSpeed <= CurrentMaxSpeed || InputY <= 0)
 	{
-		if (InputY < 0 && BoatSpeed > MaxReverseSpeed)
+		if (InputY < 0 && BoatSpeed > BoatProperties->MaxReverseSpeed)
 		{
 			ForwardForce = FVector::ZeroVector;
 		}
@@ -237,15 +239,15 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 		{
 			InputX *= -1;
 		}
-		float CurrentTurn = FMath::Clamp(InputX * TurnRate, -TurnRate, TurnRate) * DeltaTime;
+		float CurrentTurn = FMath::Clamp(InputX * BoatProperties->TurnRate, -BoatProperties->TurnRate, BoatProperties->TurnRate) * DeltaTime;
 		FRotator NewRotation = GetActorRotation();
-		NewRotation.Yaw += CurrentTurn * TurnSmoothness;
+		NewRotation.Yaw += CurrentTurn * BoatProperties->TurnSmoothness;
 		SetActorRotation(NewRotation);
 	}
 
 	// Apply lateral damping to reduce drifting
 	FVector LateralVelocity = BoatMesh->GetRightVector() * FVector::DotProduct(BoatMesh->GetPhysicsLinearVelocity(), BoatMesh->GetRightVector());
-	FVector LateralDampingForce = -LateralVelocity * LateralDampingFactor;
+	FVector LateralDampingForce = -LateralVelocity * BoatProperties->LateralDampingFactor;
 	BoatMesh->AddForce(LateralDampingForce);
 
 	X = InputX;
@@ -255,6 +257,7 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 void ABoat::Drive(float InputX, float InputY)
 {
 	if (bIsInAir) return;
+	if (!BoatProperties) return;
 	if (bIsHandbrakeActive) InputY = 0.f;
 
 	ApplyMovement(InputX, InputY);
@@ -268,14 +271,14 @@ void ABoat::Drive(float InputX, float InputY)
 	if (InputX < 0 && BoatSpeed > 20.f)
 	{
 		L_WaterFX->Activate(false);
-		TargetFirstZLoc = FirstPontoonZLoc + BoatTurnSink;
-		TargetThirdZLoc = ThirdPontoonZLoc + BoatTurnSink;
+		TargetFirstZLoc = FirstPontoonZLoc + BoatProperties->BoatTurnSink;
+		TargetThirdZLoc = ThirdPontoonZLoc + BoatProperties->BoatTurnSink;
 	}
 	else if (InputX > 0 && BoatSpeed > 20.f)
 	{
 		R_WaterFX->Activate(false);
-		TargetSecondZLoc = SecondPontoonZLoc + BoatTurnSink;
-		TargetFourthZLoc = FourthPontoonZLoc + BoatTurnSink;
+		TargetSecondZLoc = SecondPontoonZLoc + BoatProperties->BoatTurnSink;
+		TargetFourthZLoc = FourthPontoonZLoc + BoatProperties->BoatTurnSink;
 	}
 	else
 	{
@@ -292,7 +295,7 @@ void ABoat::Drive(float InputX, float InputY)
 	if (InputX != 0)
 	{
 		FRotator CurrentRotation = BoatHandle->GetRelativeRotation();
-		float NewYaw = FMath::Clamp(CurrentRotation.Yaw + InputX * HandleRotationRate * DeltaTime, -25.0f, 25.0f);
+		float NewYaw = FMath::Clamp(CurrentRotation.Yaw + InputX * BoatProperties->HandleRotationRate * DeltaTime, -25.0f, 25.0f);
 		BoatHandle->SetRelativeRotation(FRotator(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll));
 	}
 	else
@@ -357,17 +360,18 @@ void ABoat::UpdateTotalLaps(int32 LevelTotalLaps)
 void ABoat::RotateBoat(float InputY, float InputX)
 {
 	if (!bIsInAir || !BoatMesh) return;
+	if (!BoatProperties) return;
 
 	if (InputY != 0)
 	{
 		FVector FrontTorque = BoatMesh->GetRightVector() * InputY;
-		BoatMesh->AddTorqueInRadians(FrontTorque * BoatPitchRotation, NAME_None, true);
+		BoatMesh->AddTorqueInRadians(FrontTorque * BoatProperties->BoatPitchRotation, NAME_None, true);
 	}
 
 	if (InputX != 0)
 	{
 		FVector RightTorque = BoatMesh->GetForwardVector() * -InputX;
-		BoatMesh->AddTorqueInRadians(RightTorque * BoatRollRotation, NAME_None, true);
+		BoatMesh->AddTorqueInRadians(RightTorque * BoatProperties->BoatRollRotation, NAME_None, true);
 	}
 }
 
