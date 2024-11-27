@@ -1,6 +1,8 @@
 
 #include "Boat/BoatProperties.h"
 #include "TimerManager.h"
+#include "Boat/Boat.h"
+#include "NiagaraComponent.h"
 
 
 UBoatProperties::UBoatProperties()
@@ -30,6 +32,10 @@ void UBoatProperties::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	{
 		ForceMultiplier = TempForceMultiplier;
 		MaxSpeed = TempMaxSpeed;
+		if (Boat && Boat->BoostTrailEffect)
+		{
+			Boat->BoostTrailEffect->Deactivate();
+		}
 	}
 }
 
@@ -47,7 +53,7 @@ void UBoatProperties::BoostActivate(bool bBoostActive)
 		CurrentBoostFuel = FMath::Clamp(CurrentBoostFuel, 0.f, MaxBoostFuel);
 		bFillFuel = false;
 	}
-	else
+	else 
 	{
 		MaxSpeed = TempMaxSpeed;
 		bIsBoosting = false;
@@ -58,6 +64,5 @@ void UBoatProperties::BoostActivate(bool bBoostActive)
 
 void UBoatProperties::EndBoost()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Filling Fuel"));
 	bFillFuel = true;
 }

@@ -24,6 +24,7 @@ protected:
 
 
 private:
+	class ABoat* Boat;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float ForceMultiplier = 350000.f;
