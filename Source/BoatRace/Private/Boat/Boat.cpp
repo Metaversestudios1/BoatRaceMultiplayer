@@ -431,7 +431,7 @@ void ABoat::SetBoostActive(bool bBoostActive)
 
 		if (bBoostActive) 
 		{
-			if (BoostTrailEffect) BoostTrailEffect->Activate(true);
+			if (BoostTrailEffect) BoostTrailEffect->Activate(false);
 		}
 		else
 		{

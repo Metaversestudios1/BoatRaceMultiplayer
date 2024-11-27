@@ -13,6 +13,8 @@ void UBoatProperties::BeginPlay()
 {
 	Super::BeginPlay();
 	TempForceMultiplier = ForceMultiplier;
+	TempMaxSpeed = MaxSpeed;
+	
 }
 
 void UBoatProperties::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -24,7 +26,11 @@ void UBoatProperties::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		CurrentBoostFuel = FMath::Clamp(CurrentBoostFuel, 0.f, MaxBoostFuel);
 		if(CurrentBoostFuel == MaxBoostFuel) bFillFuel = false;
 	}
-	if (CurrentBoostFuel == 0) ForceMultiplier = TempForceMultiplier;
+	if (CurrentBoostFuel == 0)
+	{
+		ForceMultiplier = TempForceMultiplier;
+		MaxSpeed = TempMaxSpeed;
+	}
 }
 
 void UBoatProperties::BoostActivate(bool bBoostActive)
@@ -35,6 +41,7 @@ void UBoatProperties::BoostActivate(bool bBoostActive)
 		{
 			bIsBoosting = true;
 			ForceMultiplier *= BoostMultiplier;
+			MaxSpeed = BoostMaxSpeed;
 		}
 		CurrentBoostFuel -= 25.f * GetWorld()->GetDeltaSeconds();
 		CurrentBoostFuel = FMath::Clamp(CurrentBoostFuel, 0.f, MaxBoostFuel);
@@ -42,6 +49,7 @@ void UBoatProperties::BoostActivate(bool bBoostActive)
 	}
 	else
 	{
+		MaxSpeed = TempMaxSpeed;
 		bIsBoosting = false;
 		ForceMultiplier = TempForceMultiplier;
 		GetWorld()->GetTimerManager().SetTimer(BoostTimerHandle, this, &UBoatProperties::EndBoost, BoostCooldown, false);
@@ -50,5 +58,6 @@ void UBoatProperties::BoostActivate(bool bBoostActive)
 
 void UBoatProperties::EndBoost()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Filling Fuel"));
 	bFillFuel = true;
 }
