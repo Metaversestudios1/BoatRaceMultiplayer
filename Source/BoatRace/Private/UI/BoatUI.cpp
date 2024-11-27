@@ -3,7 +3,7 @@
 
 #include "UI/BoatUI.h"
 #include "Components/TextBlock.h"
-
+#include "Components/ProgressBar.h"
 
 
 void UBoatUI::SetSpeed(float BoatSpeed)
@@ -28,5 +28,14 @@ void UBoatUI::SetTotalLaps(int32 GameTotalLap)
 	if (TotalLaps)
 	{
 		TotalLaps->SetText(FText::AsNumber(GameTotalLap));
+	}
+}
+
+void UBoatUI::UpdateBoostFuel(float FuelLevel)
+{
+	if (BoostFuelBar)
+	{
+		float FuelPercent = FuelLevel / 100.f;
+		BoostFuelBar->SetPercent(FuelPercent);
 	}
 }

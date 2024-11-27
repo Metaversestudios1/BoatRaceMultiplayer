@@ -18,7 +18,7 @@ public:
 	void SetSpeed(float BoatSpeed);
 	void SetCurrentLap(int32 BoatCurrentLap);
 	void SetTotalLaps(int32 GameTotalLap);
-
+	void UpdateBoostFuel(float FuelLevel);
 	
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -29,5 +29,8 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TotalLaps;
+
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* BoostFuelBar;
 
 };
