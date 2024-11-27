@@ -18,6 +18,7 @@ class BOATRACE_API ABoat : public APawn, public IBoatInterface
 public:
 	ABoat();
 	virtual void Tick(float DeltaTime) override;
+	virtual void PostInitializeComponents() override;
 	virtual void UpdateCheckPoint(const FName& CurrentBoxOverlapTag) override;
 	virtual void UpdateMaxCheckPoints(int32 MaxCheckPoints) override;
 	virtual void UpdateTotalLaps(int32 LevelTotalLaps) override;
@@ -25,20 +26,20 @@ public:
 	virtual void SetHandbrakeActive(bool bActive)  override;
 	virtual void SetBoostActive(bool bBoostActive) override;
 
-
-
 	UFUNCTION(BlueprintCallable)
 	virtual void Drive(float InputX, float InputY) override;
 
 	UFUNCTION(Server, Unreliable)
 	void ServerDrive(float InputX, float InputY);
 
-
 	UPROPERTY(BlueprintReadOnly)
 	float X = 0.f;
 
 	UPROPERTY(BlueprintReadOnly)
 	float Y = 0.f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+	UNiagaraComponent* BoostTrailEffect;
 
 
 protected:
@@ -96,6 +97,8 @@ private:
 
 	float BoatSpeed = 0;
 
+
+	//VFX
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	UNiagaraComponent* L_WaterFX;
 
@@ -107,9 +110,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	UNiagaraComponent* R_BackWaterFX;
-
-	UPROPERTY(VisibleAnywhere, Category = "Effects")
-	UNiagaraComponent* BoostTrailEffect;
 
 	bool bIsInAir = false;
 
