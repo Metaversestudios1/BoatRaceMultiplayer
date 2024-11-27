@@ -50,5 +50,6 @@ void UBoatProperties::BoostActivate(bool bBoostActive)
 
 void UBoatProperties::EndBoost()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Filling Fuel"));
 	bFillFuel = true;
 }
