@@ -96,7 +96,6 @@ void ABoat::BeginPlay()
 	}
 }
 
-
 void ABoat::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -122,8 +121,15 @@ void ABoat::Tick(float DeltaTime)
 	}
 
 	UpdateBoostFuelUI();
+}
 
-
+void ABoat::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if (BoatProperties)
+	{
+		BoatProperties->Boat = this;
+	}
 }
 
 void ABoat::CheckIfInAir()
