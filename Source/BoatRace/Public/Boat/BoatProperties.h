@@ -35,6 +35,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float MaxSpeed = 150.f;
+	float TempMaxSpeed = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float MaxReverseSpeed = 20.f;
@@ -65,7 +66,7 @@ private:
 	void EndBoost();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boost")
-	float BoostMultiplier = 1.2;
+	float BoostMultiplier = 1.3;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boost")
 	float BoostCooldown = 3.f;  
@@ -74,9 +75,15 @@ private:
 	float MaxBoostFuel = 100.f;  
 
 	UPROPERTY(VisibleAnywhere, Category = "Boost")
-	float CurrentBoostFuel = 100.f;  
+	float CurrentBoostFuel = 100.f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Boost")
+	float BoostMaxSpeed = 200;
+
 	bool bIsBoosting = false;       
 	bool bFillFuel = false; 
+
+	
 
 	FTimerHandle BoostTimerHandle;
 };
