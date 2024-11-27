@@ -35,7 +35,7 @@ void ABoatPlayerController::SetupInputComponent()
 		}
 		if (IA_Boost)
 		{
-			EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Started, this, &ABoatPlayerController::ActivateBoost);
+			EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Triggered, this, &ABoatPlayerController::ActivateBoost);
 			EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Completed, this, &ABoatPlayerController::DeactivateBoost);
 		}
 		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ThisClass::Rotate);

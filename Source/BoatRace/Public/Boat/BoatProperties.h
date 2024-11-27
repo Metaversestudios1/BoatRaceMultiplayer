@@ -29,8 +29,6 @@ private:
 	float ForceMultiplier = 350000.f;
 	float TempForceMultiplier = 0.f;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	float BoostMultiplier = 1.2;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float LateralDampingFactor = 300.f;
@@ -65,13 +63,12 @@ private:
 	// Boost Mechanics
 	void BoostActivate(bool bBoostActive);
 	void EndBoost();
-	void EndCooldown();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boost")
-	float BoostDuration = 3.f;  
+	float BoostMultiplier = 1.2;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boost")
-	float BoostCooldown = 5.f;  
+	float BoostCooldown = 3.f;  
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boost")
 	float MaxBoostFuel = 100.f;  
@@ -79,9 +76,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Boost")
 	float CurrentBoostFuel = 100.f;  
 	bool bIsBoosting = false;       
-	bool bIsCooldownActive = false; 
+	bool bFillFuel = false; 
 
 	FTimerHandle BoostTimerHandle;
-	FTimerHandle CooldownTimerHandle;
-
 };
