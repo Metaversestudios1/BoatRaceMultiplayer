@@ -41,6 +41,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	UNiagaraComponent* BoostTrailEffect;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsInAir = false;
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -74,7 +77,6 @@ private:
 	bool bIsCountDownTransitionDone = false;
 	FTimerHandle CountTimer;
 	void TransitionDone();
-
 	UPROPERTY(VisibleAnywhere)
 	class UBuoyancyComponent* Buoyancy;
 
@@ -110,8 +112,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	UNiagaraComponent* R_BackWaterFX;
-
-	bool bIsInAir = false;
 
 	UPROPERTY(VisibleInstanceOnly, Category = "Lap")
 	int32 NextCheckPoint = 1;
