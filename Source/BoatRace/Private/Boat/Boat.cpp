@@ -176,7 +176,10 @@ void ABoat::CheckIfInAir()
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
 	L_BackWaterFX->Deactivate();
-	Buoyancy->BuoyancyData.BuoyancyCoefficient = 1.7;
+	if (BoatProperties)
+	{
+		Buoyancy->BuoyancyData.BuoyancyCoefficient = BoatSpeed > BoatProperties->MaxSpeed ? 2.3 : 1.8;
+	}
 	bSetBuoyancyData = false;
 	GetWorldTimerManager().ClearTimer(BuoyancyTimer);
 }
