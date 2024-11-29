@@ -52,7 +52,6 @@ ABoat::ABoat()
 	BoostTrailEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Boost Trail Effect"));
 	BoostTrailEffect->SetupAttachment(GetRootComponent());
 	BoostTrailEffect->Deactivate(); 
-
 }
 
 
@@ -448,7 +447,6 @@ void ABoat::SetBoostActive(bool bBoostActive)
 		{
 			if (BoostTrailEffect) BoostTrailEffect->Deactivate();
 		}
-		UpdateBoostFuelUI();
 	}
 }
 
