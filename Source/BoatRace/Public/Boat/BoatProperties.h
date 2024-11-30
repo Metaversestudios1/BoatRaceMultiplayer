@@ -30,7 +30,6 @@ private:
 	float ForceMultiplier = 350000.f;
 	float TempForceMultiplier = 0.f;
 
-
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float LateralDampingFactor = 300.f;
 
@@ -48,7 +47,7 @@ private:
 	float TurnSmoothness = 25.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
-	FVector BoatGravity = FVector(0.f, 0.f, -700.f);
+	FVector InAirBoatGravity = FVector(0.f, 0.f, -700.f);
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float BoatTurnSink = 50.f;
@@ -61,6 +60,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement")
 	float BoatRollRotation = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement | Water")
+	float MinBuoyancyCoefficient = 2;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Boat Movement | Water")
+	float MaxBuoyancyCoefficient = 2.3;
 
 	// Boost Mechanics
 	void BoostActivate(bool bBoostActive);

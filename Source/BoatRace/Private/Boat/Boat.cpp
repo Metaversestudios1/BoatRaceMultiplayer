@@ -52,7 +52,6 @@ ABoat::ABoat()
 	BoostTrailEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Boost Trail Effect"));
 	BoostTrailEffect->SetupAttachment(GetRootComponent());
 	BoostTrailEffect->Deactivate(); 
-
 }
 
 
@@ -165,20 +164,22 @@ void ABoat::CheckIfInAir()
 			{
 				GetWorldTimerManager().SetTimer(BuoyancyTimer, this, &ThisClass::SetBuoyancyData, 2.f, false);
 				bSetBuoyancyData = true;
+				bBoatSubmerge = false;
 			}
 			return;
 		}
 	}
 
 	bIsInAir = true;
-	BoatMesh->AddForce(BoatProperties->BoatGravity, NAME_None, true);
+	BoatMesh->AddForce(BoatProperties->InAirBoatGravity, NAME_None, true);
 	R_WaterFX->Deactivate();
 	L_WaterFX->Deactivate();
 	R_BackWaterFX->Deactivate();
 	L_BackWaterFX->Deactivate();
-	if (BoatProperties)
+	if (BoatProperties && !bBoatSubmerge)
 	{
-		Buoyancy->BuoyancyData.BuoyancyCoefficient = BoatSpeed > BoatProperties->MaxSpeed ? 2.3 : 1.8;
+		Buoyancy->BuoyancyData.BuoyancyCoefficient = BoatSpeed > BoatProperties->TempMaxSpeed ? BoatProperties->MaxBuoyancyCoefficient : BoatProperties->MinBuoyancyCoefficient;
+		bBoatSubmerge = true;
 	}
 	bSetBuoyancyData = false;
 	GetWorldTimerManager().ClearTimer(BuoyancyTimer);
@@ -446,7 +447,6 @@ void ABoat::SetBoostActive(bool bBoostActive)
 		{
 			if (BoostTrailEffect) BoostTrailEffect->Deactivate();
 		}
-		UpdateBoostFuelUI();
 	}
 }
 
