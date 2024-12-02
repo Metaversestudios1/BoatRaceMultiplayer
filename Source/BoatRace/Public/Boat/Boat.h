@@ -51,7 +51,7 @@ protected:
 
 private:
 	void ApplyMovement(float InputX, float InputY);
-	void CheckIfInAir();
+	void CheckIfInAir(float DeltaTime);
 	void CountDownTransition(float DeltaTime);
 	void UpdateBoostFuelUI();
 
