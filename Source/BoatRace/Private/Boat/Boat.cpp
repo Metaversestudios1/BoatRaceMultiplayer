@@ -107,7 +107,7 @@ void ABoat::Tick(float DeltaTime)
 		BoatUI->SetSpeed(BoatSpeed);
 	}
 
-	CheckIfInAir();
+	CheckIfInAir(DeltaTime);
 
 	if (!bIsCountDownTransitionDone)
 	{
@@ -131,7 +131,7 @@ void ABoat::PostInitializeComponents()
 	}
 }
 
-void ABoat::CheckIfInAir()
+void ABoat::CheckIfInAir(float DeltaTime)
 {
 	FVector Start = BoatMesh->GetRelativeLocation();
 	FVector End = Start - FVector(0.0f, 0.0f, 100.0f);
@@ -163,7 +163,6 @@ void ABoat::CheckIfInAir()
 			if (!bSetBuoyancyData)
 			{
 				GetWorldTimerManager().SetTimer(BuoyancyTimer, this, &ThisClass::SetBuoyancyData, 2.f, false);
-				SpringArm->CameraRotationLagSpeed = 4;
 				bSetBuoyancyData = true;
 				bBoatSubmerge = false;
 			}
@@ -180,7 +179,6 @@ void ABoat::CheckIfInAir()
 	if (BoatProperties && !bBoatSubmerge)
 	{
 		Buoyancy->BuoyancyData.BuoyancyCoefficient = BoatSpeed > BoatProperties->TempMaxSpeed ? BoatProperties->MaxBuoyancyCoefficient : BoatProperties->MinBuoyancyCoefficient;
-		SpringArm->CameraRotationLagSpeed = 1;
 		bBoatSubmerge = true;
 	}
 	bSetBuoyancyData = false;
@@ -228,7 +226,6 @@ void ABoat::TransitionDone()
 void ABoat::SetBuoyancyData()
 {
 	Buoyancy->BuoyancyData.BuoyancyCoefficient = 1.3;
-	SpringArm->CameraRotationLagSpeed = 8;
 	bSetBuoyancyData = true;
 }
 
