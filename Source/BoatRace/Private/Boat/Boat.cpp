@@ -119,8 +119,10 @@ void ABoat::Tick(float DeltaTime)
 	{
 		ApplyGradualDeceleration(DeltaTime);
 	}
-
-	UpdateBoostFuelUI();
+	if (BoatProperties->CurrentBoostFuel <= BoatProperties->MaxBoostFuel) 
+	{
+		UpdateBoostFuelUI();
+	}
 }
 
 void ABoat::PostInitializeComponents()

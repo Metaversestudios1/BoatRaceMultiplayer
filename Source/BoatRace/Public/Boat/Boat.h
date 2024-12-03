@@ -44,6 +44,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsInAir = false;
 
+	UPROPERTY(VisibleAnywhere)
+	class UBoatProperties* BoatProperties;
+
 
 protected:
 	virtual void BeginPlay() override;
@@ -55,8 +58,6 @@ private:
 	void CountDownTransition(float DeltaTime);
 	void UpdateBoostFuelUI();
 
-	UPROPERTY(VisibleAnywhere)
-	class UBoatProperties* BoatProperties;
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* BoatMesh;
