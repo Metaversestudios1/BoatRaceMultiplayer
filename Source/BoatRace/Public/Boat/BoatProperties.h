@@ -16,6 +16,8 @@ class BOATRACE_API UBoatProperties : public UActorComponent
 public:	
 	UBoatProperties();
 	friend class ABoat;
+	
+	void SetBoostFuelToMax();
 
 protected:
 	virtual void BeginPlay() override;
@@ -88,8 +90,8 @@ private:
 
 	bool bIsBoosting = false;       
 	bool bFillFuel = false; 
-
 	
-
 	FTimerHandle BoostTimerHandle;
+
+
 };

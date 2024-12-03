@@ -66,3 +66,10 @@ void UBoatProperties::EndBoost()
 {
 	bFillFuel = true;
 }
+
+void UBoatProperties::SetBoostFuelToMax()
+{
+	CurrentBoostFuel = MaxBoostFuel;
+	bFillFuel = false; 
+}
+
