@@ -99,7 +99,7 @@ private:
 	void SetBuoyancyData();
 
 	float BoatSpeed = 0;
-
+	bool bBoatSubmerge = false;
 
 	//VFX
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
