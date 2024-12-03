@@ -107,7 +107,7 @@ void ABoat::Tick(float DeltaTime)
 		BoatUI->SetSpeed(BoatSpeed);
 	}
 
-	CheckIfInAir();
+	CheckIfInAir(DeltaTime);
 
 	if (!bIsCountDownTransitionDone)
 	{
@@ -133,7 +133,7 @@ void ABoat::PostInitializeComponents()
 	}
 }
 
-void ABoat::CheckIfInAir()
+void ABoat::CheckIfInAir(float DeltaTime)
 {
 	FVector Start = BoatMesh->GetRelativeLocation();
 	FVector End = Start - FVector(0.0f, 0.0f, 100.0f);
