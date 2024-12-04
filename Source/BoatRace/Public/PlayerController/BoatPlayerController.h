@@ -37,6 +37,10 @@ private:
 	UInputAction* DriveAction;
 	void Drive(const FInputActionValue& Value);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_CorrectBoat;
+	void BoatFlip();
+
 	//HandBrake
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_Handbrake;
