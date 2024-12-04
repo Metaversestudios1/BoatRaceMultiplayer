@@ -95,6 +95,12 @@ void ABoat::BeginPlay()
 	}
 }
 
+void ABoat::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	GetWorldTimerManager().ClearTimer(CameraIdleTimerHandle);
+}
+
 void ABoat::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -123,7 +129,48 @@ void ABoat::Tick(float DeltaTime)
 	{
 		UpdateBoostFuelUI();
 	}
+	if (!BoatMesh) return;
+	FVector UpVector = BoatMesh->GetUpVector();
+	bIsFlipped = (UpVector.Z < FlipDetectionThreshold);
+
+	if (bIsFlipped)
+	{
+		CorrectBoat();
+	}
+
+	CurrentCamRotation = SpringArm->GetRelativeRotation();
+	DefaultCamRotation = FRotator(0.0f, 0.0f, 0.0f);
+
+	if (bResettingCamera && SpringArm)
+	{
+		// Current and target rotations
+		FRotator CurrentRotation = SpringArm->GetRelativeRotation();
+		FRotator TargetRotation = FRotator(0.0f, 0.0f, 0.0f);
+
+		// Smoothly interpolate rotation
+		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 3.0f);
+		SpringArm->SetRelativeRotation(NewRotation);
+
+		// Stop resetting when close enough
+		if (CurrentRotation.Equals(TargetRotation, 0.1f)) // Threshold of 0.1
+		{
+			bResettingCamera = false;
+			UE_LOG(LogTemp, Warning, TEXT("Camera reset complete."));
+		}
+	}
+
+	if (!BoatMesh) return;
+
+	FVector BoatUpVector = BoatMesh->GetUpVector();
+	bIsFlipped = (BoatUpVector.Z < FlipDetectionThreshold);
+
+	if (bIsFlipped)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Boat Flip."));
+		CorrectBoat();
+	}
 }
+
 
 void ABoat::PostInitializeComponents()
 {
@@ -459,4 +506,27 @@ void ABoat::UpdateBoostFuelUI()
 		float CurrentFuel = BoatProperties->CurrentBoostFuel;
 		BoatUI->UpdateBoostFuel(CurrentFuel);
 	}
+}
+
+void ABoat::ResetCamera()
+{
+	bResettingCamera = true; 
+}
+
+void ABoat::CameraInterp()
+{
+	GetWorldTimerManager().SetTimer(CameraIdleTimerHandle, this, &ABoat::ResetCamera, 3.0f, false);
+}
+
+void ABoat::CorrectBoat()
+{
+	if (!BoatMesh) return;
+
+	FRotator UprightRotation = FRotator(0.f, GetActorRotation().Yaw, 0.f);
+	BoatMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
+	BoatMesh->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
+
+	SetActorRotation(FMath::RInterpTo(GetActorRotation(), UprightRotation, GetWorld()->GetDeltaSeconds(), FlipCorrectionSpeed));
+
+	bIsFlipped = false;
 }

@@ -47,10 +47,30 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UBoatProperties* BoatProperties;
 
+	UPROPERTY(VisibleAnywhere)
+	class USpringArmComponent* SpringArm;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boat|Correction")
+    float FlipDetectionThreshold = -0.7f; // Threshold for detecting flipped state.
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boat|Correction")
+    float FlipCorrectionSpeed = 2.0f; // Speed for upright correction.
+    
+    bool bIsFlipped = false;
+    
+    void CorrectBoat();
+    
+    FTimerHandle CameraIdleTimerHandle;
+    bool bIsCameraIdle;
+    
+    void ResetCamera();
+    
+	void CameraInterp();
+
 
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 
 private:
 	void ApplyMovement(float InputX, float InputY);
@@ -68,8 +88,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* BoatCharacter;
 
-	UPROPERTY(VisibleAnywhere)
-	class USpringArmComponent* SpringArm;
+	
 
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
@@ -131,6 +150,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> BoatUIClass;
+	
+	FRotator CurrentCamRotation;
+    FRotator DefaultCamRotation;
+    bool bResettingCamera = false;
 
 
 	/****HandBrake****/
