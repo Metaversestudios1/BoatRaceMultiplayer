@@ -1,5 +1,6 @@
 #include "CollectSystem/CollectableKey.h"
 #include "Boat/Boat.h"
+#include "Interfaces/BoatInterface.h"
 #include "Boat/BoatProperties.h"
 #include "CollectSystem/MovableActor.h"
 
@@ -30,16 +31,14 @@ void ACollectableKey::Tick(float DeltaTime)
 
 void ACollectableKey::HandleOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor,UPrimitiveComponent* OtherComp,int32 OtherBodyIndex,bool bFromSweep,const FHitResult& SweepResult)
 {
-    if (OtherActor && OtherActor->IsA(ABoat::StaticClass()))
+    if (OtherActor)
     {
-        ABoat* Boat = Cast<ABoat>(OtherActor);
+        IBoatInterface* BoatInterface = Cast<IBoatInterface>(OtherActor);
+        if (!BoatInterface) return;
         switch (KeyType)
         {
         case EKeyType::Boost:
-            if (Boat && Boat->BoatProperties)
-            {
-                Boat->BoatProperties->SetBoostFuelToMax();
-            }
+            BoatInterface->SetBoostActive(true, FillFuel);
             break;
         case EKeyType::MovableActor:
             if (MovableActor)

@@ -103,7 +103,7 @@ void ABoatPlayerController::ActivateBoost()
 {
 	if (BoatInterface)
 	{
-		BoatInterface->SetBoostActive(true);
+		BoatInterface->SetBoostActive(true , 0);
 	}
 }
 
@@ -111,6 +111,6 @@ void ABoatPlayerController::DeactivateBoost()
 {
 	if (BoatInterface)
 	{
-		BoatInterface->SetBoostActive(false);
+		BoatInterface->SetBoostActive(false , 0);
 	}
 }

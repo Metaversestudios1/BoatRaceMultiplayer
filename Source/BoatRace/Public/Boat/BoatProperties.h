@@ -70,7 +70,7 @@ private:
 	float MaxBuoyancyCoefficient = 2.3;
 
 	// Boost Mechanics
-	void BoostActivate(bool bBoostActive);
+	void BoostActivate(bool bBoostActive , float RefillFuel);
 	void EndBoost();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Boost")

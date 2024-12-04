@@ -24,7 +24,7 @@ public:
 	virtual void UpdateTotalLaps(int32 LevelTotalLaps) override;
 	virtual void RotateBoat(float InputY, float InputX) override;
 	virtual void SetHandbrakeActive(bool bActive)  override;
-	virtual void SetBoostActive(bool bBoostActive) override;
+	virtual void SetBoostActive(bool bBoostActive, float RefillFuel) override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void Drive(float InputX, float InputY) override;
