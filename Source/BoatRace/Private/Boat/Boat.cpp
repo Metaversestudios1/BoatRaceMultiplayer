@@ -118,6 +118,7 @@ void ABoat::Tick(float DeltaTime)
 	{
 		ApplyGradualDeceleration(DeltaTime);
 	}
+
 	if (BoatProperties->CurrentBoostFuel <= BoatProperties->MaxBoostFuel) 
 	{
 		UpdateBoostFuelUI();
@@ -434,18 +435,17 @@ void ABoat::ApplyDrift(float DeltaTime)
 	BoatMesh->AddForce(DriftForce, NAME_None, true);
 }
 
-void ABoat::SetBoostActive(bool bBoostActive)
+void ABoat::SetBoostActive(bool bBoostActive, float RefillFuel)
 {
-
 	if (BoatProperties)
 	{
-		BoatProperties->BoostActivate(bBoostActive);
+		BoatProperties->BoostActivate(bBoostActive , RefillFuel);
 
-		if (bBoostActive) 
+		if (bBoostActive && RefillFuel == 0) 
 		{
 			if (BoostTrailEffect) BoostTrailEffect->Activate(false);
 		}
-		else
+		else if(RefillFuel == 0)
 		{
 			if (BoostTrailEffect) BoostTrailEffect->Deactivate();
 		}

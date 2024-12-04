@@ -39,8 +39,15 @@ void UBoatProperties::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	}
 }
 
-void UBoatProperties::BoostActivate(bool bBoostActive)
+void UBoatProperties::BoostActivate(bool bBoostActive, float RefillFuel)
 {
+	if (RefillFuel > 0)
+	{
+		CurrentBoostFuel = FMath::Clamp(CurrentBoostFuel + RefillFuel, 0.f, MaxBoostFuel);
+		bIsBoosting = false;
+		return;
+	}
+
 	if (bBoostActive)
 	{
 		if (!bIsBoosting) 

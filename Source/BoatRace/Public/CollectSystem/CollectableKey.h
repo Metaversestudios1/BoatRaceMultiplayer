@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "CollectableKey.generated.h"
 
@@ -50,4 +49,8 @@ private:
 
     UPROPERTY(EditAnywhere)
     class AMovableActor* MovableActor;
+
+    UPROPERTY(EditAnywhere, Category = "Fill Fuel")
+    float FillFuel = 50.0f;
+
 };
