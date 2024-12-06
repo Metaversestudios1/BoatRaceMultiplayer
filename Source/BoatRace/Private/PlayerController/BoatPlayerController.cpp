@@ -40,10 +40,6 @@ void ABoatPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Triggered, this, &ABoatPlayerController::ActivateBoost);
 			EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Completed, this, &ABoatPlayerController::DeactivateBoost);
 		}
-		if (IA_CorrectBoat)
-		{
-			EnhancedInputComponent->BindAction(IA_CorrectBoat, ETriggerEvent::Triggered, this, &ABoatPlayerController::BoatFlip);
-		}
 		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ThisClass::Rotate);
 	}
 }
@@ -59,14 +55,7 @@ void ABoatPlayerController::Look(const FInputActionValue& Value)
 	Boat->CameraInterp();
 	Boat->bIsCameraIdle = false;
 }
-void ABoatPlayerController::BoatFlip()
-{
-	ABoat* Boat = CastChecked<ABoat>(GetPawn());
-	if (Boat->bIsFlipped)
-	{
-		Boat->CorrectBoat();
-	}
-}
+
 void ABoatPlayerController::Drive(const FInputActionValue& Value)
 {
 	FVector2D MoveAxis = Value.Get<FVector2D>();
