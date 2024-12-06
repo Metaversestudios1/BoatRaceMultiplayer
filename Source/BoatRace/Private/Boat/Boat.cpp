@@ -129,14 +129,6 @@ void ABoat::Tick(float DeltaTime)
 	{
 		UpdateBoostFuelUI();
 	}
-	if (!BoatMesh) return;
-	FVector UpVector = BoatMesh->GetUpVector();
-	bIsFlipped = (UpVector.Z < FlipDetectionThreshold);
-
-	if (bIsFlipped)
-	{
-		CorrectBoat();
-	}
 
 	CurrentCamRotation = SpringArm->GetRelativeRotation();
 	DefaultCamRotation = FRotator(0.0f, 0.0f, 0.0f);
@@ -157,17 +149,6 @@ void ABoat::Tick(float DeltaTime)
 			bResettingCamera = false;
 			UE_LOG(LogTemp, Warning, TEXT("Camera reset complete."));
 		}
-	}
-
-	if (!BoatMesh) return;
-
-	FVector BoatUpVector = BoatMesh->GetUpVector();
-	bIsFlipped = (BoatUpVector.Z < FlipDetectionThreshold);
-
-	if (bIsFlipped)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Boat Flip."));
-		CorrectBoat();
 	}
 }
 
@@ -307,10 +288,13 @@ void ABoat::ApplyMovement(float InputX, float InputY)
 		{
 			InputX *= -1;
 		}
-		float CurrentTurn = FMath::Clamp(InputX * BoatProperties->TurnRate, -BoatProperties->TurnRate, BoatProperties->TurnRate) * DeltaTime;
-		FRotator NewRotation = GetActorRotation();
-		NewRotation.Yaw += CurrentTurn * BoatProperties->TurnSmoothness;
-		SetActorRotation(NewRotation);
+		if (BoatSpeed > 5)
+		{
+			float CurrentTurn = FMath::Clamp(InputX * BoatProperties->TurnRate, -BoatProperties->TurnRate, BoatProperties->TurnRate) * DeltaTime;
+			FRotator NewRotation = GetActorRotation();
+			NewRotation.Yaw += CurrentTurn * BoatProperties->TurnSmoothness;
+			SetActorRotation(NewRotation);
+		}
 	}
 
 	// Apply lateral damping to reduce drifting
@@ -516,17 +500,4 @@ void ABoat::ResetCamera()
 void ABoat::CameraInterp()
 {
 	GetWorldTimerManager().SetTimer(CameraIdleTimerHandle, this, &ABoat::ResetCamera, 3.0f, false);
-}
-
-void ABoat::CorrectBoat()
-{
-	if (!BoatMesh) return;
-
-	FRotator UprightRotation = FRotator(0.f, GetActorRotation().Yaw, 0.f);
-	BoatMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
-	BoatMesh->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
-
-	SetActorRotation(FMath::RInterpTo(GetActorRotation(), UprightRotation, GetWorld()->GetDeltaSeconds(), FlipCorrectionSpeed));
-
-	bIsFlipped = false;
 }

@@ -10,7 +10,7 @@
 bool UMainMenu::Initialize()
 {
 	if (!Super::Initialize()) return false;
-
+	 
 	if (NewGameButton)
 	{
 		NewGameButton->OnClicked.AddDynamic(this, &ThisClass::NewGameButtonClicked);
@@ -31,7 +31,7 @@ void UMainMenu::NewGameButtonClicked()
 {
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("New Game")));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString(TEXT("New Game C++ logic")));
 	}
 	UGameplayStatics::OpenLevel(this, FName("MapSelection"));
 }
@@ -40,17 +40,12 @@ void UMainMenu::MulitplayerButtonClicked()
 {
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString(TEXT("Multiplayer")));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString(TEXT("Multiplayer BP Logic")));
 	}
 }
 
 void UMainMenu::QuitGameButtonClicked()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString(TEXT("Quit Game")));
-	}
-
 	if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0))
 	{
 		UKismetSystemLibrary::QuitGame(this, PlayerController, EQuitPreference::Quit, true);
