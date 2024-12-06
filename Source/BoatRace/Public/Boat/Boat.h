@@ -49,16 +49,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boat|Correction")
-    float FlipDetectionThreshold = -0.7f; // Threshold for detecting flipped state.
-    
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boat|Correction")
-    float FlipCorrectionSpeed = 2.0f; // Speed for upright correction.
-    
-    bool bIsFlipped = false;
-    
-    void CorrectBoat();
     
     FTimerHandle CameraIdleTimerHandle;
     bool bIsCameraIdle;
@@ -97,6 +87,7 @@ private:
 	bool bIsCountDownTransitionDone = false;
 	FTimerHandle CountTimer;
 	void TransitionDone();
+
 	UPROPERTY(VisibleAnywhere)
 	class UBuoyancyComponent* Buoyancy;
 
