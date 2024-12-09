@@ -51,4 +51,8 @@ private:
 	UInputAction* IA_Boost;
 	void ActivateBoost();
 	void DeactivateBoost();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Respawn;
+	void HandleRespawn();
 };

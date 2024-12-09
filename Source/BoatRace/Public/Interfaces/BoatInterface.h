@@ -26,5 +26,8 @@ public:
 	virtual void RotateBoat(float InputY, float InputX) = 0;
 	virtual void SetHandbrakeActive(bool bActive) = 0;
 	virtual void SetBoostActive(bool bBoostActive, float RefillFuel) = 0;
-
+	virtual void AddSpringArmRotation(FRotator Rotation) = 0;
+	virtual void ResetCameraIdleTimer() = 0;
+	virtual void StartCameraInterpolation() = 0;
+	virtual void Respawn() = 0;
 };
