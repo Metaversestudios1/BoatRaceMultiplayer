@@ -89,8 +89,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* BoatCharacter;
 
-	
-
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* Camera;
 
@@ -169,4 +167,9 @@ private:
 
 	float LateralDriftForce = 1500.f; //Controls how intense the drift effect is.
 	float MinDriftSpeed = 4.f; //Prevents the boat from coming to a complete stop during a drift.
+
+
+public:
+	FORCEINLINE UStaticMeshComponent* GetBoatHandle() const { return BoatHandle; }
+	FORCEINLINE USkeletalMeshComponent* GetBoatCharacter() const { return BoatCharacter; }
 };
