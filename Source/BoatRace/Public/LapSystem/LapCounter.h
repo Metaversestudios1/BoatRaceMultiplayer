@@ -15,6 +15,9 @@ public:
 	ALapCounter();
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Lap Counter")
+	FVector GetLapCounterLocation() const;
+
 
 protected:
 	virtual void BeginPlay() override;

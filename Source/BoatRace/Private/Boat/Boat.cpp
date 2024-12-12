@@ -101,6 +101,8 @@ void ABoat::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GetWorldTimerManager().ClearTimer(CameraIdleTimerHandle);
 }
 
+
+
 void ABoat::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -133,23 +135,7 @@ void ABoat::Tick(float DeltaTime)
 	CurrentCamRotation = SpringArm->GetRelativeRotation();
 	DefaultCamRotation = FRotator(0.0f, 0.0f, 0.0f);
 
-	if (bResettingCamera && SpringArm)
-	{
-		// Current and target rotations
-		FRotator CurrentRotation = SpringArm->GetRelativeRotation();
-		FRotator TargetRotation = FRotator(0.0f, 0.0f, 0.0f);
-
-		// Smoothly interpolate rotation
-		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 3.0f);
-		SpringArm->SetRelativeRotation(NewRotation);
-
-		// Stop resetting when close enough
-		if (CurrentRotation.Equals(TargetRotation, 0.1f)) // Threshold of 0.1
-		{
-			bResettingCamera = false;
-			UE_LOG(LogTemp, Warning, TEXT("Camera reset complete."));
-		}
-	}
+	AutoResetCamera(DeltaTime);
 }
 
 
@@ -499,5 +485,72 @@ void ABoat::ResetCamera()
 
 void ABoat::CameraInterp()
 {
-	GetWorldTimerManager().SetTimer(CameraIdleTimerHandle, this, &ABoat::ResetCamera, 3.0f, false);
+	GetWorldTimerManager().SetTimer(CameraIdleTimerHandle, this, &ABoat::ResetCamera, 2.0f, false);
+}
+
+void ABoat::SetRespawnLocation(const FVector& Location)
+{
+	RespawnLocation = Location;
+}
+
+void ABoat::AddSpringArmRotation(FRotator Rotation)
+{
+	if (SpringArm)
+	{
+		SpringArm->AddLocalRotation(Rotation);
+	}
+}
+
+void ABoat::ResetCameraIdleTimer()
+{
+	GetWorldTimerManager().ClearTimer(CameraIdleTimerHandle);
+	bIsCameraIdle = false;
+}
+
+void ABoat::StartCameraInterpolation()
+{
+	CameraInterp();
+}
+
+void ABoat::AutoResetCamera(float DeltaTime)
+{
+	if (bResettingCamera && SpringArm)
+	{
+
+		FRotator CurrentRotation = SpringArm->GetRelativeRotation();
+		FRotator TargetRotation = FRotator(0.0f, 0.0f, 0.0f);
+
+
+		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 3.0f);
+		SpringArm->SetRelativeRotation(NewRotation);
+
+
+		if (CurrentRotation.Equals(TargetRotation, 0.1f))
+		{
+			bResettingCamera = false;
+			UE_LOG(LogTemp, Warning, TEXT("Camera reset complete."));
+		}
+	}
+}
+
+void ABoat::Respawn()
+{
+	if (IsBoatFlipped())
+	{
+		if (!RespawnLocation.IsZero())
+		{
+			SetActorLocation(RespawnLocation);
+			SetActorRotation(FRotator::ZeroRotator);
+		}
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Boat is flipped!"));
+	}
+	
+}
+
+bool ABoat::IsBoatFlipped() const
+{
+	const FVector UpVector = GetActorUpVector();
+	const float DotProduct = FVector::DotProduct(UpVector, FVector::UpVector);
+
+	return DotProduct < 0.0f;
 }
