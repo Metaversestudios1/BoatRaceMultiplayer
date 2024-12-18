@@ -56,11 +56,22 @@ public:
     void ResetCamera();
     
 	void CameraInterp();
+	void SetRespawnLocation(const FVector& Location);
+	virtual void AddSpringArmRotation(FRotator Rotation) override;
+	virtual void ResetCameraIdleTimer() override;
+	virtual void StartCameraInterpolation() override;
+	virtual void Respawn() override;
 
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
+	void AutoResetCamera(float DeltaTime);
+	FVector RespawnLocation;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Boat")
+	bool IsBoatFlipped() const;
 
 private:
 	void ApplyMovement(float InputX, float InputY);

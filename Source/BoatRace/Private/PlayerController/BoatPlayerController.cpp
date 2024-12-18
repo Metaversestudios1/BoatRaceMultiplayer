@@ -41,20 +41,18 @@ void ABoatPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(IA_Boost, ETriggerEvent::Completed, this, &ABoatPlayerController::DeactivateBoost);
 		}
 		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ThisClass::Rotate);
+		EnhancedInputComponent->BindAction(IA_Respawn, ETriggerEvent::Triggered, this, &ABoatPlayerController::HandleRespawn);
 	}
 }
 
 void ABoatPlayerController::Look(const FInputActionValue& Value)
 {
 	const FVector2D LookAxis = Value.Get<FVector2D>();
-
-	ABoat* Boat = CastChecked<ABoat>(GetPawn());
-	Boat->SpringArm->AddLocalRotation(FRotator(0, LookAxis.X, 0));
-
-	GetWorldTimerManager().ClearTimer(Boat->CameraIdleTimerHandle);
-	Boat->CameraInterp();
-	Boat->bIsCameraIdle = false;
+	BoatInterface->AddSpringArmRotation(FRotator(0, LookAxis.X, 0));
+	BoatInterface->ResetCameraIdleTimer();
+	BoatInterface->StartCameraInterpolation();
 }
+
 
 void ABoatPlayerController::Drive(const FInputActionValue& Value)
 {
@@ -118,5 +116,14 @@ void ABoatPlayerController::DeactivateBoost()
 	if (BoatInterface)
 	{
 		BoatInterface->SetBoostActive(false , 0);
+	}
+}
+
+void ABoatPlayerController::HandleRespawn()
+{
+	APawn* ControlledPawn = GetPawn();
+	if (IBoatInterface* Boat = Cast<IBoatInterface>(ControlledPawn))
+	{
+		Boat->Respawn();
 	}
 }

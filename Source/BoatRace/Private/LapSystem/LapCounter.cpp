@@ -2,6 +2,8 @@
 
 
 #include "LapSystem/LapCounter.h"
+
+#include "Boat/Boat.h"
 #include "Components/BoxComponent.h"
 #include "Interfaces/BoatInterface.h"
 
@@ -42,6 +44,30 @@ void ALapCounter::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 			Boat->UpdateCheckPoint(Tags[0]);
 		}
 	}
+	if (OtherActor->ActorHasTag(FName("Boat")))
+	{
+		if (IBoatInterface* Boat = Cast<IBoatInterface>(OtherActor))
+		{
+			Boat->UpdateCheckPoint(Tags[0]);
+
+			// Update respawn location
+			if (ABoat* BoatActor = Cast<ABoat>(OtherActor))
+			{
+				FVector LapCounterLocation = GetLapCounterLocation();
+				BoatActor->SetRespawnLocation(LapCounterLocation);
+
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(
+						-1, // Key (unique ID); -1 means always add new message
+						5.0f, // Duration in seconds
+						FColor::Yellow, // Text color
+						FString::Printf(TEXT("LapCounter Location: %s"), *LapCounterLocation.ToString())
+					);
+				}
+			}
+		}
+	}
 }
 
 
@@ -49,4 +75,9 @@ void ALapCounter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+FVector ALapCounter::GetLapCounterLocation() const
+{
+	return GetActorLocation();
 }
